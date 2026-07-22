@@ -1,24 +1,24 @@
 {
   "meta": {
-    "mode": "snapshot",
-    "lastAttempt": null,
-    "lastSuccessfulSync": null,
+    "mode": "manual",
+    "lastAttempt": "2026-07-22T03:45:32.474Z",
+    "lastSuccessfulSync": "2026-07-22T03:45:32.474Z",
     "timezone": "America/Guatemala",
     "privacy": "aggregate-only"
   },
   "summary": {
-    "projects": null,
-    "requirements": null,
-    "openTickets": null,
-    "qaPending": null,
-    "slaBreached": null
+    "projects": 32,
+    "requirements": 17,
+    "openTickets": 28,
+    "qaPending": 16,
+    "slaBreached": 21
   },
   "sources": {
-    "jira": {"status": "pending", "message": "Falta agregar los secretos de Jira en GitHub."},
-    "gmail": {"status": "pending", "message": "Falta autorizar Gmail; se publicarán solo conteos."},
+    "jira": {"status": "ok", "message": "Corte manual con Rovo: 32 proyectos, 28 tickets abiertos, 16 actividades QA pendientes y 21 SLA vencidos."},
+    "gmail": {"status": "ok", "message": "17 conversaciones humanas con Requerimiento en el asunto; se excluyeron notificaciones automáticas."},
     "zoho": {"status": "pending", "message": "Pendiente acceso a clasificación y condiciones de pago."},
     "drive": {"status": "ok", "message": "Dashboards recuperados de Dashboard Listaso."}
   },
   "jira": {"projects": [], "tickets": [], "qa": [], "workload": []},
-  "requirements": {"count": null, "linkedToJira": null, "withoutJira": null}
+  "requirements": {"count": 17, "linkedToJira": null, "withoutJira": null}
 }
