@@ -35,9 +35,16 @@ jobs:
         run: node scripts/refresh-data.mjs
       - name: Guardar nuevo corte
         run: |
-          if git diff --quiet -- data/live.json; then exit 0; fi
+          if git diff --quiet -- data/live.json; then
+            echo "No hay cambios en live.json"
+            exit 0
+          fi
+
           git config user.name "dashboard-data-bot"
           git config user.email "dashboard-data-bot@users.noreply.github.com"
+
           git add data/live.json
           git commit -m "Actualizar datos de dashboards"
-          git push
+
+          git pull --rebase origin main
+          git push origin HEAD:main
