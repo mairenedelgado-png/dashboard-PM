@@ -15,58 +15,36 @@
       <h1>PM Operations Center</h1>
       <p>Gestión de Proyectos, Requerimientos, QA, Capacidad y Customer Success para Listaso Technologies. La página muestra la última sincronización y el estado de cada fuente.</p>
       <div class="hero-actions">
-  <a class="primary" href="dashboards/pm.html">
-    📊 Abrir Dashboard PM
-  </a>
-
-  <button id="syncButton" class="sync-button" type="button">
-    🔄 Actualizar Dashboard
-  </button>
-</div>
+        <a class="primary" href="dashboards/pm.html">📊 Abrir Dashboard PM</a>
+        <button id="refreshButton" class="sync-button" type="button">↻ Actualizar información</button>
+      </div>
     </div>
+
     <aside class="sync-card" aria-live="polite">
-      <div id="syncModal" class="sync-modal hidden">
-    <div class="sync-content">
-
-        <h3>Actualizando Dashboard</h3>
-
-        <div class="sync-item" id="jiraStep">
-            ⏳ Jira
+      <div class="sync-card-header">
+        <div>
+          <span class="sync-label">ESTADO DEL SISTEMA</span>
+          <strong id="systemStatus"><i class="status-dot online"></i> En línea</strong>
         </div>
+        <span id="syncSpinner" class="sync-spinner" aria-hidden="true"></span>
+      </div>
 
-        <div class="sync-item" id="gmailStep">
-            ⏳ Gmail
-        </div>
+      <div class="sync-progress" id="syncProgress" hidden>
+        <div class="sync-progress-bar" id="syncProgressBar"></div>
+      </div>
 
-        <div class="sync-item" id="zohoStep">
-            ⏳ Zoho
-        </div>
+      <div class="sync-sources" id="syncSources">
+        <div><span>Jira</span><b>✓</b></div>
+        <div><span>Gmail</span><b>✓</b></div>
+        <div><span>Zoho</span><b>✓</b></div>
+        <div><span>Dashboards</span><b>✓</b></div>
+      </div>
 
-        <div class="sync-item" id="pmStep">
-            ⏳ PM
-        </div>
-
-        <div class="sync-item" id="rqStep">
-            ⏳ Requerimientos
-        </div>
-
-        <div class="sync-item" id="capStep">
-            ⏳ Capacidad
-        </div>
-
-        <div class="sync-item" id="csStep">
-            ⏳ Customer Success
-        </div>
-
-        <div class="sync-item" id="publishStep">
-            ⏳ Publicando...
-        </div>
-
-    </div>
-</div>
-      <span>Última sincronización</span>
-      <strong id="lastSync">Consultando…</strong>
-      <small id="syncMode">Cargando estado de fuentes</small>
+      <div class="sync-meta">
+        <span>Última sincronización</span>
+        <strong id="lastSync">Consultando…</strong>
+        <small id="syncMode">Cargando estado de fuentes</small>
+      </div>
     </aside>
   </header>
 
