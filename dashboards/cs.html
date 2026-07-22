@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CS Operations Center</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --panel:#ffffff;
+      --panel-soft:#f8fafc;
+      --text:#18202f;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --primary:#4f46e5;
+      --primary-soft:#eef2ff;
+      --green:#16a34a;
+      --yellow:#ca8a04;
+      --orange:#ea580c;
+      --red:#dc2626;
+      --blue:#0284c7;
+      --sidebar:#111827;
+      --sidebar-muted:#9ca3af;
+      --shadow:0 10px 30px rgba(15,23,42,.07);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    button, input, select{font:inherit}
+    a{text-decoration:none;color:inherit}
+
+    .layout{
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:260px 1fr;
+    }
+
+    aside{
+      background:var(--sidebar);
+      color:white;
+      padding:22px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:24px;
+      padding:0 8px;
+    }
+
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:grid;place-items:center;font-weight:800;
+      box-shadow:0 8px 20px rgba(99,102,241,.35);
+    }
+
+    .brand small{display:block;color:var(--sidebar-muted);margin-top:2px}
+    .brand strong{display:block;font-size:15px;letter-spacing:.2px}
+
+    .nav-section{margin:16px 0 8px;padding:0 10px;color:#6b7280;font-size:11px;text-transform:uppercase;letter-spacing:.12em}
+    .nav-btn{
+      width:100%;
+      border:0;
+      background:transparent;
+      color:#d1d5db;
+      text-align:left;
+      padding:11px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:3px 0;
+    }
+    .nav-btn:hover,.nav-btn.active{
+      color:white;
+      background:rgba(255,255,255,.09);
+    }
+    .nav-btn.active{box-shadow:inset 3px 0 0 #818cf8}
+
+    main{padding:26px 28px 40px;min-width:0}
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .topbar h1{margin:0;font-size:26px}
+    .topbar p{margin:6px 0 0;color:var(--muted)}
+    .status-pill{
+      display:inline-flex;align-items:center;gap:8px;
+      border:1px solid #c7d2fe;
+      background:var(--primary-soft);
+      color:#3730a3;
+      padding:9px 12px;border-radius:999px;font-size:13px;font-weight:600;
+      white-space:nowrap;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--green)}
+
+    .view{display:none}
+    .view.active{display:block}
+
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+      margin-bottom:18px;
+    }
+    .metric{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:var(--shadow);
+    }
+    .metric .label{font-size:13px;color:var(--muted)}
+    .metric .value{font-size:28px;font-weight:800;margin-top:8px}
+    .metric .sub{font-size:12px;color:var(--muted);margin-top:6px}
+    .metric.danger{border-left:4px solid var(--red)}
+    .metric.warning{border-left:4px solid var(--orange)}
+    .metric.good{border-left:4px solid var(--green)}
+    .metric.info{border-left:4px solid var(--blue)}
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card-head{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .card-head h2{font-size:16px;margin:0}
+    .card-head span{font-size:12px;color:var(--muted)}
+    .card-body{padding:16px 18px}
+
+    .actions-list{display:grid;gap:10px}
+    .action-item{
+      display:grid;
+      grid-template-columns:10px 1fr auto;
+      align-items:center;
+      gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid #f1f5f9;
+    }
+    .action-item:last-child{border-bottom:0}
+    .sev{width:10px;height:36px;border-radius:999px}
+    .sev.red{background:var(--red)}
+    .sev.orange{background:var(--orange)}
+    .sev.yellow{background:var(--yellow)}
+    .action-item strong{font-size:14px}
+    .action-item p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .badge{
+      display:inline-flex;align-items:center;
+      padding:5px 8px;border-radius:999px;
+      font-size:12px;font-weight:700;
+    }
+    .badge.red{background:#fee2e2;color:#991b1b}
+    .badge.orange{background:#ffedd5;color:#9a3412}
+    .badge.yellow{background:#fef9c3;color:#854d0e}
+    .badge.green{background:#dcfce7;color:#166534}
+    .badge.blue{background:#e0f2fe;color:#075985}
+    .badge.gray{background:#f3f4f6;color:#4b5563}
+    .badge.purple{background:#ede9fe;color:#5b21b6}
+
+    .health-row{
+      display:grid;
+      grid-template-columns:120px 1fr 48px;
+      gap:12px;
+      align-items:center;
+      margin:13px 0;
+      font-size:13px;
+    }
+    .bar{height:10px;background:#eef2f7;border-radius:999px;overflow:hidden}
+    .fill{height:100%;border-radius:999px}
+    .fill.green{background:var(--green)}
+    .fill.yellow{background:var(--yellow)}
+    .fill.orange{background:var(--orange)}
+    .fill.red{background:var(--red)}
+
+    .toolbar{
+      display:flex;
+      align-items:end;
+      gap:10px;
+      flex-wrap:wrap;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fbfcfe;
+    }
+    .control{display:grid;gap:5px}
+    .control label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+    .control input,.control select{
+      border:1px solid #d7dce3;
+      background:white;
+      padding:9px 10px;
+      border-radius:9px;
+      min-width:150px;
+      outline:none;
+    }
+    .control input:focus,.control select:focus{border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+    .btn{
+      border:1px solid #d7dce3;
+      background:white;
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:9px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+    }
+    .btn:hover{background:#f8fafc}
+    .btn.primary{background:var(--primary);border-color:var(--primary);color:white}
+    .btn.link{padding:7px 9px}
+    .btn.zoho{color:#166534;border-color:#bbf7d0;background:#f0fdf4}
+    .btn.jira{color:#075985;border-color:#bae6fd;background:#f0f9ff}
+
+    .table-wrap{overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:980px}
+    th{
+      text-align:left;
+      padding:11px 12px;
+      font-size:11px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      background:#f8fafc;
+      border-bottom:1px solid var(--line);
+      position:sticky;top:0;
+    }
+    td{
+      padding:12px;
+      border-bottom:1px solid #eef2f7;
+      font-size:13px;
+      vertical-align:middle;
+    }
+    tbody tr:hover{background:#fafbff}
+    .client{font-weight:800}
+    .muted{color:var(--muted)}
+    .days{font-weight:800}
+    .days.critical{color:var(--red)}
+    .days.risk{color:var(--orange)}
+    .days.warn{color:var(--yellow)}
+    .link-group{display:flex;gap:6px;flex-wrap:wrap}
+
+    .chart{
+      height:260px;
+      display:flex;
+      align-items:end;
+      gap:14px;
+      padding:14px 4px 6px;
+      border-bottom:1px solid var(--line);
+      position:relative;
+    }
+    .chart::before,.chart::after{
+      content:"";
+      position:absolute;left:0;right:0;height:1px;background:#edf1f5;
+    }
+    .chart::before{top:33%}
+    .chart::after{top:66%}
+    .bar-col{flex:1;min-width:28px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:8px;z-index:1}
+    .bar-value{font-size:11px;font-weight:800}
+    .bar-visual{width:70%;max-width:34px;background:linear-gradient(180deg,#4ade80,#16a34a);border-radius:7px 7px 2px 2px}
+    .bar-label{font-size:11px;color:var(--muted)}
+    .legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:12px}
+    .legend span::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--green);display:inline-block;margin-right:6px}
+
+    .empty{
+      padding:40px;text-align:center;color:var(--muted)
+    }
+
+    .metric{
+      position:relative;
+      cursor:pointer;
+      transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .metric:hover{
+      transform:translateY(-2px);
+      box-shadow:0 14px 34px rgba(15,23,42,.11);
+      border-color:#c7d2fe;
+    }
+    .metric-toggle{
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:28px;
+      height:28px;
+      border:0;
+      border-radius:8px;
+      background:#f8fafc;
+      color:#64748b;
+      cursor:pointer;
+      font-weight:800;
+    }
+    .metric-toggle:hover{background:#eef2ff;color:#3730a3}
+    .metric-menu{
+      display:none;
+      position:absolute;
+      top:52px;
+      right:12px;
+      z-index:30;
+      width:260px;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:12px;
+      box-shadow:0 18px 45px rgba(15,23,42,.16);
+      overflow:hidden;
+      cursor:default;
+    }
+    .metric-menu.open{display:block}
+    .metric-menu-head{
+      padding:11px 13px;
+      font-size:12px;
+      font-weight:800;
+      color:#475569;
+      background:#f8fafc;
+      border-bottom:1px solid var(--line);
+    }
+    .metric-ticket{
+      width:100%;
+      border:0;
+      background:white;
+      text-align:left;
+      padding:10px 13px;
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      border-bottom:1px solid #f1f5f9;
+    }
+    .metric-ticket:hover{background:#fafbff}
+    .metric-ticket:last-of-type{border-bottom:0}
+    .metric-ticket strong{font-size:12px}
+    .metric-ticket span{font-size:11px;color:var(--muted);white-space:nowrap}
+    .metric-menu-footer{
+      width:100%;
+      border:0;
+      border-top:1px solid var(--line);
+      background:#f8fafc;
+      color:#3730a3;
+      text-align:left;
+      padding:10px 13px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .metric-menu-footer:hover{background:#eef2ff}
+
+    .row-actions{position:relative;display:inline-block}
+    .kebab{
+      width:32px;height:32px;border:1px solid #d7dce3;border-radius:9px;
+      background:white;cursor:pointer;font-size:18px;line-height:1;
+    }
+    .kebab:hover{background:#f8fafc}
+    .row-menu{
+      display:none;
+      position:absolute;
+      right:0;
+      top:36px;
+      min-width:170px;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:10px;
+      box-shadow:0 14px 34px rgba(15,23,42,.15);
+      overflow:hidden;
+      z-index:40;
+    }
+    .row-menu.open{display:block}
+    .row-menu a,.row-menu button{
+      display:block;width:100%;
+      padding:9px 11px;
+      border:0;background:white;text-align:left;
+      font-size:12px;cursor:pointer;color:var(--text);
+    }
+    .row-menu a:hover,.row-menu button:hover{background:#f8fafc}
+    .row-menu .danger-action{color:#b91c1c}
+
+
+
+    .sla-cell{min-width:160px}
+    .sla-line{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:6px;
+    }
+    .sla-time{font-size:11px;color:var(--muted);white-space:nowrap}
+    .sla-progress{
+      height:7px;
+      background:#edf2f7;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .sla-progress > span{
+      display:block;
+      height:100%;
+      border-radius:999px;
+    }
+    .sla-ok{background:var(--green)}
+    .sla-warning{background:var(--yellow)}
+    .sla-risk{background:var(--orange)}
+    .sla-breached{background:var(--red)}
+
+    .footer-note{
+      margin-top:18px;
+      padding:12px 14px;
+      border:1px dashed #cbd5e1;
+      border-radius:12px;
+      color:var(--muted);
+      font-size:12px;
+      background:#fff;
+    }
+
+    @media (max-width:1100px){
+      .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-2{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      .layout{grid-template-columns:1fr}
+      aside{position:relative;height:auto}
+      main{padding:18px}
+      .metrics{grid-template-columns:1fr}
+      .topbar{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <div class="brand">
+      <div class="brand-mark">CS</div>
+      <div>
+        <strong>Operations Center</strong>
+        <small>Customer Success</small>
+      </div>
+    </div>
+
+    <div class="nav-section">Principal</div>
+    <button class="nav-btn active" data-view="dashboard">🏠 Dashboard</button>
+    <button class="nav-btn" data-view="queue">🎫 Queue de tickets</button>
+    <button class="nav-btn" data-view="actions">⚠️ Acciones pendientes</button>
+
+    <div class="nav-section">Operación</div>
+    <button class="nav-btn" data-view="development">💻 Desarrollo</button>
+    <button class="nav-btn" data-view="clients">👥 Clientes</button>
+    <button class="nav-btn" data-view="metrics">📊 Métricas</button>
+
+    <div class="nav-section">Fuentes</div>
+    <button class="nav-btn" data-view="settings">⚙️ Integraciones</button>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard Ejecutivo</h1>
+        <p id="pageSubtitle">Visibilidad consolidada de Zoho, Jira y el tracker de onboarding.</p>
+      </div>
+      <div class="status-pill"><span class="dot"></span> Prototipo listo para conexión</div>
+    </div>
+
+    <section class="view active" id="dashboard">
+      <div class="metrics" style="grid-template-columns:repeat(5,minmax(0,1fr))">
+        <div class="metric danger kpi-card" data-kpi="stale">
+          <button class="metric-toggle" aria-label="Ver tickets">⌄</button>
+          <div class="label">Tickets sin actualizar +7 días</div><div class="value">21</div><div class="sub">Requieren depuración hoy</div>
+          <div class="metric-menu"></div>
+        </div>
+        <div class="metric warning kpi-card" data-kpi="ready">
+          <button class="metric-toggle" aria-label="Ver tickets">⌄</button>
+          <div class="label">Ready for CS</div><div class="value">11</div><div class="sub">Pendientes de validación o contacto</div>
+          <div class="metric-menu"></div>
+        </div>
+        <div class="metric info kpi-card" data-kpi="uat">
+          <button class="metric-toggle" aria-label="Ver tickets">⌄</button>
+          <div class="label">Proyectos en UAT</div><div class="value">6</div><div class="sub">2 superan 10 días</div>
+          <div class="metric-menu"></div>
+        </div>
+        <div class="metric good kpi-card" data-kpi="graduated">
+          <button class="metric-toggle" aria-label="Ver cuentas">⌄</button>
+          <div class="label">Cuentas graduadas</div><div class="value">38</div><div class="sub">4 graduadas este mes</div>
+          <div class="metric-menu"></div>
+        </div>
+        <div class="metric danger kpi-card" data-kpi="sla">
+          <button class="metric-toggle" aria-label="Ver tickets">⌄</button>
+          <div class="label">SLA vencido o en riesgo</div><div class="value">4</div><div class="sub">2 vencidos · 2 próximos a vencer</div>
+          <div class="metric-menu"></div>
+        </div>
+
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h2>Acciones inmediatas</h2><span>Ordenadas por urgencia</span></div>
+          <div class="card-body actions-list">
+            <div class="action-item"><span class="sev red"></span><div><strong>7 tickets podrían cerrarse</strong><p>Sin actividad por más de 15 días y sin escalación activa en Jira.</p></div><span class="badge red">Crítico</span></div>
+            <div class="action-item"><span class="sev orange"></span><div><strong>11 tickets están Ready for CS</strong><p>DEV finalizó y el equipo CS debe validar, contactar o cerrar.</p></div><span class="badge orange">Hoy</span></div>
+            <div class="action-item"><span class="sev yellow"></span><div><strong>6 proyectos permanecen en UAT</strong><p>Dos casos necesitan seguimiento con el cliente.</p></div><span class="badge yellow">Seguimiento</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Salud del queue</h2><span>Por antigüedad</span></div>
+          <div class="card-body">
+            <div class="health-row"><span>0–3 días</span><div class="bar"><div class="fill green" style="width:74%"></div></div><strong>74%</strong></div>
+            <div class="health-row"><span>4–7 días</span><div class="bar"><div class="fill yellow" style="width:46%"></div></div><strong>18%</strong></div>
+            <div class="health-row"><span>8–15 días</span><div class="bar"><div class="fill orange" style="width:28%"></div></div><strong>6%</strong></div>
+            <div class="health-row"><span>15+ días</span><div class="bar"><div class="fill red" style="width:16%"></div></div><strong>2%</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Tickets prioritarios</h2><span>Zoho + Jira</span></div>
+        <div class="table-wrap"><table id="priorityTable"></table></div>
+      </div>
+    </section>
+
+    <section class="view" id="queue">
+      <div class="card">
+        <div class="card-head"><h2>Queue de tickets</h2><span id="queueCount">0 registros</span></div>
+        <div class="toolbar">
+          <div class="control"><label>Buscar</label><input id="searchInput" placeholder="Cliente, Zoho o Jira..." /></div>
+          <div class="control"><label>Estado</label>
+            <select id="statusFilter">
+              <option value="">Todos</option>
+              <option>Abierto</option>
+              <option>Ready for CS</option>
+              <option>UAT</option>
+              <option>Esperando cliente</option>
+            </select>
+          </div>
+          <div class="control"><label>Antigüedad</label>
+            <select id="ageFilter">
+              <option value="">Todos</option>
+              <option value="3">Más de 3 días</option>
+              <option value="7">Más de 7 días</option>
+              <option value="15">Más de 15 días</option>
+            </select>
+          </div>
+          <div class="control"><label>SLA</label>
+            <select id="slaFilter">
+              <option value="">Todos</option>
+              <option value="Vencido">Vencidos</option>
+              <option value="En riesgo">En riesgo</option>
+              <option value="Dentro de SLA">Dentro de SLA</option>
+            </select>
+          </div>
+          <button class="btn" id="clearFilters">Limpiar</button>
+          <button class="btn primary" id="exportCsv">Exportar CSV</button>
+        </div>
+        <div class="table-wrap"><table id="queueTable"></table></div>
+      </div>
+    </section>
+
+    <section class="view" id="actions">
+      <div class="metrics">
+        <div class="metric danger"><div class="label">Cerrar o depurar</div><div class="value">7</div><div class="sub">Sin actividad 15+ días</div></div>
+        <div class="metric warning"><div class="label">Contactar cliente</div><div class="value">9</div><div class="sub">Esperando validación o respuesta</div></div>
+        <div class="metric info"><div class="label">Validar Ready for CS</div><div class="value">11</div><div class="sub">Casos devueltos por DEV</div></div>
+        <div class="metric good"><div class="label">Sin acción</div><div class="value">54</div><div class="sub">Dentro del rango saludable</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Bandeja de trabajo de Jennifer</h2><span>Recomendaciones automáticas</span></div>
+        <div class="table-wrap"><table id="actionsTable"></table></div>
+      </div>
+    </section>
+
+    <section class="view" id="development">
+      <div class="metrics">
+        <div class="metric warning"><div class="label">Ready for CS</div><div class="value">11</div><div class="sub">3 llevan más de 5 días</div></div>
+        <div class="metric info"><div class="label">UAT</div><div class="value">6</div><div class="sub">2 vencidos</div></div>
+        <div class="metric danger"><div class="label">Bloqueados</div><div class="value">4</div><div class="sub">Esperando cliente o accesos</div></div>
+        <div class="metric good"><div class="label">Entregados esta semana</div><div class="value">8</div><div class="sub">Listos para seguimiento</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Desarrollo — Jira</h2><span>Ready for CS, UAT y bloqueos</span></div>
+        <div class="table-wrap"><table id="devTable"></table></div>
+      </div>
+    </section>
+
+    <section class="view" id="clients">
+      <div class="metrics">
+        <div class="metric info"><div class="label">Onboarding</div><div class="value">23</div><div class="sub">7 en roadblock</div></div>
+        <div class="metric good"><div class="label">Graduadas</div><div class="value">38</div><div class="sub">4 este mes</div></div>
+        <div class="metric warning"><div class="label">En riesgo</div><div class="value">7</div><div class="sub">Requieren seguimiento</div></div>
+        <div class="metric danger"><div class="label">Roadblocks</div><div class="value">7</div><div class="sub">Datos, cliente o DEV</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Cuentas</h2><span>Tracker de onboarding</span></div>
+        <div class="toolbar">
+          <button class="btn active-client-filter" data-client-filter="all">Todas</button>
+          <button class="btn" data-client-filter="Onboarding">Onboarding</button>
+          <button class="btn" data-client-filter="Graduada">Graduadas</button>
+          <button class="btn" data-client-filter="Riesgo">En riesgo</button>
+        </div>
+        <div class="table-wrap"><table id="clientsTable"></table></div>
+      </div>
+    </section>
+
+    <section class="view" id="metrics">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h2>Queue por hora</h2><span>Tickets ingresados</span></div>
+          <div class="card-body">
+            <div class="chart" id="hourChart"></div>
+            <div class="legend"><span>Tickets ingresados por hora</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Indicadores operativos</h2><span>Resumen del día</span></div>
+          <div class="card-body">
+            <div class="health-row"><span>Tickets resueltos</span><div class="bar"><div class="fill green" style="width:68%"></div></div><strong>68</strong></div>
+            <div class="health-row"><span>Escalados a Jira</span><div class="bar"><div class="fill orange" style="width:24%"></div></div><strong>12</strong></div>
+            <div class="health-row"><span>SLA cumplido</span><div class="bar"><div class="fill green" style="width:75%"></div></div><strong>75%</strong></div>
+            <div class="health-row"><span>En riesgo</span><div class="bar"><div class="fill orange" style="width:25%"></div></div><strong>2</strong></div>
+            <div class="health-row"><span>Fuera de SLA</span><div class="bar"><div class="fill red" style="width:25%"></div></div><strong>2</strong></div>
+            <div class="health-row"><span>Ready for CS</span><div class="bar"><div class="fill yellow" style="width:22%"></div></div><strong>11</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="settings">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head"><h2>Fuentes de datos</h2><span>Estado del prototipo</span></div>
+          <div class="card-body actions-list">
+            <div class="action-item"><span class="sev yellow"></span><div><strong>Google Sheets</strong><p>Tracker de onboarding identificado y listo para mapear.</p></div><span class="badge yellow">Pendiente API</span></div>
+            <div class="action-item"><span class="sev yellow"></span><div><strong>Zoho Desk</strong><p>Se requiere conexión para tickets, links y última actualización.</p></div><span class="badge yellow">Pendiente</span></div>
+            <div class="action-item"><span class="sev yellow"></span><div><strong>Jira</strong><p>Se requiere consulta para Ready for CS, UAT y links directos.</p></div><span class="badge yellow">Pendiente</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Reglas sugeridas</h2><span>Automatización</span></div>
+          <div class="card-body">
+            <div class="actions-list">
+              <div class="action-item"><span class="sev red"></span><div><strong>15+ días sin actividad</strong><p>Sugerir revisar y cerrar.</p></div><span class="badge red">Cierre</span></div>
+              <div class="action-item"><span class="sev orange"></span><div><strong>Ready for CS +5 días</strong><p>Asignar seguimiento al responsable CS.</p></div><span class="badge orange">Validar</span></div>
+              <div class="action-item"><span class="sev yellow"></span><div><strong>UAT +10 días</strong><p>Contactar cliente o documentar bloqueo.</p></div><span class="badge yellow">Escalar</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-note">
+        Este archivo es un prototipo funcional con datos de ejemplo. La siguiente fase consiste en conectar las APIs de Zoho Desk y Jira y mapearlas con el Tenant del tracker.
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const tickets = [
+    {client:"Triangle", zoho:"ZD-1250", jira:"LISPRO-1522", updated:"08-Jul-2026", days:12, status:"Abierto", owner:"Andrea", source:"Zoho", recommendation:"Revisar y cerrar si no hay seguimiento", priority:"Alta", slaTarget:8, slaElapsed:11, slaState:"Vencido"},
+    {client:"V4 Food Family", zoho:"ZD-1188", jira:"LISPRO-1421", updated:"14-Jul-2026", days:6, status:"Ready for CS", owner:"Kevin", source:"Jira", recommendation:"Coordinar validación con cliente", priority:"Alta", slaTarget:24, slaElapsed:20, slaState:"En riesgo"},
+    {client:"Panamerican", zoho:"ZD-1150", jira:"BAL-842", updated:"19-Jul-2026", days:1, status:"UAT", owner:"Alexis", source:"Jira", recommendation:"Esperar validación documentada", priority:"Media", slaTarget:24, slaElapsed:9, slaState:"Dentro de SLA"},
+    {client:"Hondu Products", zoho:"ZD-1212", jira:"—", updated:"02-Jul-2026", days:18, status:"Esperando cliente", owner:"Milciades", source:"Zoho", recommendation:"Enviar último recordatorio o cerrar", priority:"Alta", slaTarget:8, slaElapsed:14, slaState:"Vencido"},
+    {client:"Nuestra Cocina", zoho:"ZD-1288", jira:"QALT-711", updated:"17-Jul-2026", days:3, status:"Ready for CS", owner:"Kevin", source:"Jira", recommendation:"Validar customización entregada", priority:"Media", slaTarget:24, slaElapsed:22, slaState:"En riesgo"},
+    {client:"Best Floridian", zoho:"ZD-1261", jira:"LISPRO-1480", updated:"11-Jul-2026", days:9, status:"UAT", owner:"Jorge", source:"Jira", recommendation:"Confirmar pruebas y fecha de cierre", priority:"Alta", slaTarget:24, slaElapsed:17, slaState:"Dentro de SLA"},
+    {client:"Bojmar Corporation", zoho:"ZD-1290", jira:"—", updated:"18-Jul-2026", days:2, status:"Abierto", owner:"Milciades", source:"Zoho", recommendation:"Mantener seguimiento normal", priority:"Baja", slaTarget:24, slaElapsed:6, slaState:"Dentro de SLA"},
+    {client:"La Bodega Plus", zoho:"ZD-1177", jira:"BAL-801", updated:"04-Jul-2026", days:16, status:"Abierto", owner:"Kevin", source:"Zoho", recommendation:"Revisar dependencia DEV y cerrar duplicados", priority:"Alta", slaTarget:48, slaElapsed:25, slaState:"Dentro de SLA"}
+  ];
+
+  const clients = [
+    {tenant:"5612", name:"V4 Food Family", stage:"Onboarding", phase:"TRN Complementario", trainer:"Kevin Saa", erp:"Back Office", risk:"Riesgo", days:81},
+    {tenant:"5501", name:"Nuestra Cocina", stage:"Onboarding", phase:"Roadblock", trainer:"Kevin Saa", erp:"QB Desktop", risk:"Riesgo", days:425},
+    {tenant:"5529", name:"Best Floridian LLC", stage:"Onboarding", phase:"Roadblock", trainer:"Kevin Saa", erp:"QB Desktop", risk:"Riesgo", days:340},
+    {tenant:"5588", name:"Imusa USA LLC", stage:"Graduada", phase:"Operando", trainer:"Kevin Saa", erp:"SAGE", risk:"Saludable", days:174},
+    {tenant:"5603", name:"Bojmar Corporation", stage:"Onboarding", phase:"Roadblock", trainer:"Milciades Sosa", erp:"QB Online", risk:"Seguimiento", days:128},
+    {tenant:"5619", name:"Hudson Valley Ridge", stage:"Graduada", phase:"Operando", trainer:"Milciades Sosa", erp:"QB Online", risk:"Saludable", days:62}
+  ];
+
+  const titles = {
+    dashboard:["Dashboard Ejecutivo","Visibilidad consolidada de Zoho, Jira y el tracker de onboarding."],
+    queue:["Queue de Tickets","Identifica tickets inactivos, links directos y posibles cierres."],
+    actions:["Acciones Pendientes","Bandeja diaria para Jennifer y el equipo de CS."],
+    development:["Desarrollo","Seguimiento de Jira: Ready for CS, UAT y bloqueos."],
+    clients:["Clientes","Cuentas activas, onboarding, graduadas y en riesgo."],
+    metrics:["Métricas","Tendencias operativas y comportamiento del queue."],
+    settings:["Integraciones","Estado de conexión de Google Sheets, Zoho Desk y Jira."]
+  };
+
+  const badge = (text) => {
+    const map = {
+      "Ready for CS":"orange","UAT":"blue","Abierto":"gray","Esperando cliente":"yellow",
+      "Alta":"red","Media":"yellow","Baja":"green","Riesgo":"red","Seguimiento":"yellow","Saludable":"green",
+      "Onboarding":"blue","Graduada":"green","Roadblock":"red","Operando":"green","Vencido":"red","En riesgo":"orange","Dentro de SLA":"green"
+    };
+    return `<span class="badge ${map[text] || "gray"}">${text}</span>`;
+  };
+
+  const daysClass = d => d > 15 ? "critical" : d > 7 ? "risk" : d > 3 ? "warn" : "";
+
+  function slaCell(t){
+    const pct = Math.min(100, Math.round((t.slaElapsed / t.slaTarget) * 100));
+    const remaining = t.slaTarget - t.slaElapsed;
+    const klass = t.slaState === "Vencido" ? "sla-breached" :
+                  t.slaState === "En riesgo" ? "sla-risk" :
+                  pct >= 70 ? "sla-warning" : "sla-ok";
+    const detail = remaining < 0 ? `${Math.abs(remaining)} h vencido` : `${remaining} h restantes`;
+    return `
+      <div class="sla-cell">
+        <div class="sla-line">
+          ${badge(t.slaState)}
+          <span class="sla-time">${detail}</span>
+        </div>
+        <div class="sla-progress"><span class="${klass}" style="width:${pct}%"></span></div>
+      </div>`;
+  }
+
+  function rowActionMenu(t, jiraOnly=false){
+    return `
+      <div class="row-actions">
+        <button class="kebab" aria-label="Abrir acciones" onclick="toggleRowMenu(event, this)">⋮</button>
+        <div class="row-menu">
+          ${jiraOnly ? "" : `<a href="#" onclick="event.preventDefault()">Abrir Zoho</a>`}
+          ${t.jira !== "—" ? `<a href="#" onclick="event.preventDefault()">Abrir Jira</a>` : ""}
+          <button onclick="copyTicket('${t.zoho}', '${t.jira}')">Copiar referencia</button>
+          <button onclick="event.preventDefault()">Ver historial</button>
+          <button class="danger-action" onclick="event.preventDefault()">Marcar para revisión/cierre</button>
+        </div>
+      </div>`;
+  }
+
+  function toggleRowMenu(event, button){
+    event.stopPropagation();
+    const menu = button.nextElementSibling;
+    document.querySelectorAll(".row-menu.open").forEach(m => {
+      if (m !== menu) m.classList.remove("open");
+    });
+    menu.classList.toggle("open");
+  }
+
+  function copyTicket(zoho, jira){
+    const value = jira && jira !== "—" ? `${zoho} / ${jira}` : zoho;
+    navigator.clipboard?.writeText(value);
+  }
+
+  function goToView(viewId){
+    const btn = document.querySelector(`.nav-btn[data-view="${viewId}"]`);
+    if (btn) btn.click();
+  }
+
+  function applyQueueShortcut(type){
+    goToView("queue");
+    document.getElementById("searchInput").value = "";
+    document.getElementById("statusFilter").value = "";
+    document.getElementById("ageFilter").value = "";
+    document.getElementById("slaFilter").value = "";
+
+    if(type === "stale") document.getElementById("ageFilter").value = "7";
+    if(type === "ready") document.getElementById("statusFilter").value = "Ready for CS";
+    if(type === "uat") document.getElementById("statusFilter").value = "UAT";
+    if(type === "sla") document.getElementById("slaFilter").value = "Vencido";
+
+    renderQueue();
+  }
+
+  function buildKpiMenus(){
+    const definitions = {
+      stale: {
+        title: "Tickets más antiguos",
+        items: tickets.filter(t => t.days > 7).sort((a,b)=>b.days-a.days).slice(0,4),
+        footer: "Ver todos los tickets +7 días",
+        action: () => applyQueueShortcut("stale")
+      },
+      ready: {
+        title: "Ready for CS",
+        items: tickets.filter(t => t.status === "Ready for CS").sort((a,b)=>b.days-a.days).slice(0,4),
+        footer: "Ver todos en Ready for CS",
+        action: () => applyQueueShortcut("ready")
+      },
+      uat: {
+        title: "Proyectos en UAT",
+        items: tickets.filter(t => t.status === "UAT").sort((a,b)=>b.days-a.days).slice(0,4),
+        footer: "Ver todos los proyectos en UAT",
+        action: () => applyQueueShortcut("uat")
+      },
+      sla: {
+        title: "Tickets con SLA comprometido",
+        items: tickets.filter(t => ["Vencido","En riesgo"].includes(t.slaState))
+                      .sort((a,b)=>(b.slaElapsed/b.slaTarget)-(a.slaElapsed/a.slaTarget))
+                      .slice(0,4),
+        footer: "Ver tickets con SLA vencido",
+        action: () => applyQueueShortcut("sla")
+      },
+      graduated: {
+        title: "Cuentas graduadas recientes",
+        items: clients.filter(c => c.stage === "Graduada").slice(0,4).map(c => ({client:c.name, days:c.days})),
+        footer: "Ver todas las cuentas graduadas",
+        action: () => {
+          goToView("clients");
+          renderClients("Graduada");
+        }
+      }
+    };
+
+    document.querySelectorAll(".kpi-card").forEach(card => {
+      const key = card.dataset.kpi;
+      const def = definitions[key];
+      const menu = card.querySelector(".metric-menu");
+      menu.innerHTML = `
+        <div class="metric-menu-head">${def.title}</div>
+        ${def.items.length ? def.items.map(item => `
+          <button class="metric-ticket">
+            <strong>${item.client}</strong>
+            <span>${item.days} días</span>
+          </button>`).join("") : `<div class="empty">Sin registros</div>`}
+        <button class="metric-menu-footer">${def.footer} →</button>`;
+
+      card.addEventListener("click", event => {
+        if (event.target.closest(".metric-menu-footer")) {
+          event.stopPropagation();
+          def.action();
+          menu.classList.remove("open");
+          return;
+        }
+        if (event.target.closest(".metric-ticket")) {
+          event.stopPropagation();
+          def.action();
+          menu.classList.remove("open");
+          return;
+        }
+        event.stopPropagation();
+        document.querySelectorAll(".metric-menu.open").forEach(m => {
+          if (m !== menu) m.classList.remove("open");
+        });
+        menu.classList.toggle("open");
+      });
+    });
+  }
+
+  function ticketRows(data){
+    return `
+      <thead><tr>
+        <th>Cliente</th><th>Zoho</th><th>Jira</th><th>Última actualización</th><th>Días</th>
+        <th>Estado</th><th>SLA</th><th>Responsable</th><th>Recomendación</th><th>Links</th>
+      </tr></thead>
+      <tbody>${data.map(t=>`
+        <tr>
+          <td class="client">${t.client}</td>
+          <td>${t.zoho}</td>
+          <td>${t.jira}</td>
+          <td>${t.updated}</td>
+          <td class="days ${daysClass(t.days)}">${t.days}</td>
+          <td>${badge(t.status)}</td>
+          <td>${slaCell(t)}</td>
+          <td>${t.owner}</td>
+          <td>${t.recommendation}</td>
+          <td>${rowActionMenu(t)}</td>
+        </tr>`).join("")}</tbody>`;
+  }
+
+  function renderQueue(){
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const status = document.getElementById("statusFilter").value;
+    const age = Number(document.getElementById("ageFilter").value || 0);
+    const sla = document.getElementById("slaFilter").value;
+    const filtered = tickets.filter(t =>
+      (!q || `${t.client} ${t.zoho} ${t.jira}`.toLowerCase().includes(q)) &&
+      (!status || t.status === status) &&
+      (!age || t.days > age) &&
+      (!sla || t.slaState === sla)
+    );
+    document.getElementById("queueTable").innerHTML = ticketRows(filtered);
+    document.getElementById("queueCount").textContent = `${filtered.length} registros`;
+  }
+
+  function renderActions(){
+    const sorted = [...tickets].sort((a,b)=>b.days-a.days);
+    document.getElementById("actionsTable").innerHTML = `
+      <thead><tr><th>Prioridad</th><th>Cliente</th><th>Sistema</th><th>Estado</th><th>SLA</th><th>Días</th><th>Acción recomendada</th><th>Abrir</th></tr></thead>
+      <tbody>${sorted.map(t=>`
+        <tr><td>${badge(t.priority)}</td><td class="client">${t.client}</td><td>${t.source}</td>
+        <td>${badge(t.status)}</td><td>${slaCell(t)}</td><td class="days ${daysClass(t.days)}">${t.days}</td>
+        <td>${t.recommendation}</td><td>${rowActionMenu(t)}</td></tr>`).join("")}</tbody>`;
+  }
+
+  function renderDev(){
+    const dev = tickets.filter(t=>["Ready for CS","UAT"].includes(t.status) || t.jira!=="—");
+    document.getElementById("devTable").innerHTML = `
+      <thead><tr><th>Cliente</th><th>Jira</th><th>Estado</th><th>SLA</th><th>Última actualización</th><th>Días</th><th>Responsable</th><th>Acción CS</th><th>Link</th></tr></thead>
+      <tbody>${dev.map(t=>`
+        <tr><td class="client">${t.client}</td><td>${t.jira}</td><td>${badge(t.status)}</td><td>${slaCell(t)}</td><td>${t.updated}</td>
+        <td class="days ${daysClass(t.days)}">${t.days}</td><td>${t.owner}</td><td>${t.recommendation}</td>
+        <td>${rowActionMenu(t, true)}</td></tr>`).join("")}</tbody>`;
+  }
+
+  function renderClients(filter="all"){
+    const data = clients.filter(c => filter==="all" || c.stage===filter || c.risk===filter);
+    document.getElementById("clientsTable").innerHTML = `
+      <thead><tr><th>Tenant</th><th>Cuenta</th><th>Stage</th><th>Fase</th><th>ERP</th><th>Entrenador</th><th>Días onboarding</th><th>Salud</th></tr></thead>
+      <tbody>${data.map(c=>`
+        <tr><td>${c.tenant}</td><td class="client">${c.name}</td><td>${badge(c.stage)}</td><td>${badge(c.phase)}</td>
+        <td>${c.erp}</td><td>${c.trainer}</td><td>${c.days}</td><td>${badge(c.risk)}</td></tr>`).join("")}</tbody>`;
+  }
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+      btn.classList.add("active");
+      const id=btn.dataset.view;
+      document.getElementById(id).classList.add("active");
+      document.getElementById("pageTitle").textContent=titles[id][0];
+      document.getElementById("pageSubtitle").textContent=titles[id][1];
+    });
+  });
+
+  ["searchInput","statusFilter","ageFilter","slaFilter"].forEach(id=>document.getElementById(id).addEventListener("input",renderQueue));
+  document.getElementById("clearFilters").addEventListener("click",()=>{
+    document.getElementById("searchInput").value="";
+    document.getElementById("statusFilter").value="";
+    document.getElementById("ageFilter").value="";
+    document.getElementById("slaFilter").value="";
+    renderQueue();
+  });
+
+  document.getElementById("exportCsv").addEventListener("click",()=>{
+    const rows=[["Cliente","Zoho","Jira","Última actualización","Días","Estado","SLA objetivo (h)","SLA transcurrido (h)","Estado SLA","Responsable","Recomendación"]];
+    tickets.forEach(t=>rows.push([t.client,t.zoho,t.jira,t.updated,t.days,t.status,t.slaTarget,t.slaElapsed,t.slaState,t.owner,t.recommendation]));
+    const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;a.download="cs_operations_queue.csv";a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.querySelectorAll("[data-client-filter]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll("[data-client-filter]").forEach(b=>b.classList.remove("primary"));
+      btn.classList.add("primary");
+      renderClients(btn.dataset.clientFilter);
+    });
+  });
+
+  const chartData=[0,2,1,0,0,3,7,1,3,1,0];
+  const labels=["5 AM","6 AM","7 AM","8 AM","9 AM","10 AM","11 AM","12 PM","1 PM","2 PM","3 PM"];
+  const max=Math.max(...chartData);
+  document.getElementById("hourChart").innerHTML=chartData.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar-value">${v||""}</div>
+      <div class="bar-visual" style="height:${v?Math.max(18,(v/max)*180):3}px;opacity:${v?1:.2}"></div>
+      <div class="bar-label">${labels[i]}</div>
+    </div>`).join("");
+
+  document.getElementById("priorityTable").innerHTML=ticketRows(tickets.slice(0,5));
+  renderQueue();
+  renderActions();
+  renderDev();
+  renderClients();
+  buildKpiMenus();
+
+  document.addEventListener("click", () => {
+    document.querySelectorAll(".metric-menu.open, .row-menu.open").forEach(menu => menu.classList.remove("open"));
+  });
+</script>
+<script src="../assets/dashboard-shell.js"></script></body>
+</html>
