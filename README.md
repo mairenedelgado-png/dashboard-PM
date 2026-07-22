@@ -1,6 +1,6 @@
-# Centro de dashboards Listaso
+# PM Operations Center — Mairene Delgado
 
-Este repositorio publica una portada para los dashboards de PM, Requerimientos, Capacidad y Customer Success.
+Centro operativo de Project Management para Listaso Technologies, administrado por Mairene Delgado.
 
 ## Fuentes acordadas
 
@@ -13,7 +13,7 @@ Este repositorio publica una portada para los dashboards de PM, Requerimientos, 
 
 ## Actualización
 
-`.github/workflows/refresh-data.yml` ejecuta `scripts/refresh-data.mjs` cada seis horas y también puede iniciarse manualmente. La página lee `data/live.json` sin guardar credenciales en el navegador.
+`.github/workflows/refresh-data.yml` ejecuta `scripts/refresh-data.mjs` todos los días a las 6:00 a. m., 12:00 p. m. y 3:30 p. m. de Guatemala, y también puede iniciarse manualmente. La página lee `data/live.json` sin guardar credenciales en el navegador.
 
 Secretos requeridos para Jira: `JIRA_BASE_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`.
 
