@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "mode": "snapshot",
+    "lastAttempt": null,
+    "lastSuccessfulSync": null,
+    "timezone": "America/Guatemala",
+    "privacy": "aggregate-only"
+  },
+  "summary": {
+    "projects": null,
+    "requirements": null,
+    "openTickets": null,
+    "qaPending": null,
+    "slaBreached": null
+  },
+  "sources": {
+    "jira": {"status": "pending", "message": "Falta agregar los secretos de Jira en GitHub."},
+    "gmail": {"status": "pending", "message": "Falta autorizar Gmail; se publicarán solo conteos."},
+    "zoho": {"status": "pending", "message": "Pendiente acceso a clasificación y condiciones de pago."},
+    "drive": {"status": "ok", "message": "Dashboards recuperados de Dashboard Listaso."}
+  },
+  "jira": {"projects": [], "tickets": [], "qa": [], "workload": []},
+  "requirements": {"count": null, "linkedToJira": null, "withoutJira": null}
+}
