@@ -1,8 +1,8 @@
 {
   "meta": {
     "mode": "manual",
-    "lastAttempt": "2026-07-21T22:02:30-06:00",
-    "lastSuccessfulSync": "2026-07-21T22:02:30-06:00",
+    "lastAttempt": "2026-07-21T22:22:17-06:00",
+    "lastSuccessfulSync": "2026-07-21T22:22:17-06:00",
     "timezone": "America/Guatemala",
     "privacy": "aggregate-only"
   },
@@ -23,8 +23,8 @@
       "message": "17 conversaciones humanas únicas con Requerimiento en el asunto; cada hilo se contó una sola vez y se excluyeron notificaciones automáticas de Jira, invitaciones y resúmenes automáticos."
     },
     "zoho": {
-      "status": "pending",
-      "message": "Clasificación de clientes y condiciones de pago pendientes de acceso o validación. Los registros faltantes deben mostrarse como Pendiente de validación por Alejandra."
+      "status": "partial",
+      "message": "Zoho CRM Accounts conectado. Ya están disponibles clasificación, estado VIP/onboarding, salud del cliente, pago pendiente, upsell, ejecutivo comercial, tenant, usuarios, ERP, paquete y desarrollos personalizados. No se localizó todavía un campo confiable de condiciones o términos de pago; los valores ausentes se muestran como Pendiente de validación por Alejandra."
     },
     "drive": {
       "status": "ok",
@@ -42,7 +42,8 @@
     "sourceDifferences": [
       "QALT contiene 31 registros totales: 16 pendientes y 15 finalizados; no se creó métrica de rechazados.",
       "La clasificación cliente/interno de LISPRO depende del indicador Interno y del catálogo ya definido en el dashboard.",
-      "Zoho aún no entrega clasificación y condiciones de pago para completar todos los registros.",
+      "Zoho Accounts contiene la clasificación comercial y el indicador Pending Payment, pero no se encontró un campo inequívoco para términos o condiciones de pago.",
+      "Hay cuentas de Zoho con clasificación, salud, tipo de cliente o pago pendiente sin completar; se conserva el estado Pendiente de validación por Alejandra.",
       "La relación uno a uno entre las 17 conversaciones de requerimientos y sus claves LISPRO continúa pendiente de conciliación completa."
     ]
   },
@@ -54,7 +55,44 @@
     "qaStatuses": ["Tareas por hacer", "En curso", "En revisión", "Blocked", "Finalizada"],
     "dailyCapacityHours": 7.5,
     "weeklyCapacityHours": 37.5,
-    "missingZohoLabel": "Pendiente de validación por Alejandra"
+    "missingZohoLabel": "Pendiente de validación por Alejandra",
+    "zohoMatchField": "Tenant"
+  },
+  "zoho": {
+    "module": "Accounts",
+    "matchField": "Tenant",
+    "availableFields": [
+      "Classification",
+      "Status",
+      "Customer_Type",
+      "Pending_Payment",
+      "Customer_Health",
+      "Upsell",
+      "Possible_Upsell",
+      "Sales_Rep_Assigned",
+      "Users",
+      "Sales_App_Users",
+      "Delivery_Users",
+      "BackOffice_Users",
+      "Inventory_Users",
+      "Sync_Users",
+      "Number_Custom_Developments",
+      "ERP",
+      "Package",
+      "Apps_Incluided",
+      "Cuenta_Estrat_gica_Presidencia"
+    ],
+    "paymentTermsField": null,
+    "matchedDashboardClients": [
+      {"tenant": 5524, "name": "Triangle Quality Foods LLC", "classification": "A", "status": "Onboarding VIP", "pendingPayment": "No"},
+      {"tenant": 7614, "name": "PANAMERICAN FOODS FLORIDA", "classification": "C", "status": "Customer", "pendingPayment": "Pendiente de validación por Alejandra"},
+      {"tenant": 7817, "name": "American Imports", "classification": "C", "status": "Onboarding VIP", "pendingPayment": "Yes"},
+      {"tenant": 7743, "name": "Comercial Mexicana", "classification": "A", "status": "Onboarding VIP", "pendingPayment": "No"},
+      {"tenant": 5616, "name": "La Bodega Plus LLC", "classification": "Pendiente de validación por Alejandra", "status": "Onboarding", "pendingPayment": "No"},
+      {"tenant": 5612, "name": "V4 Food Family", "classification": "Pendiente de validación por Alejandra", "status": "Onboarding", "pendingPayment": "No"},
+      {"tenant": 5813, "name": "Diamond Rock Food Import Inc", "classification": "B", "status": "Onboarding", "pendingPayment": "Pendiente de validación por Alejandra"},
+      {"tenant": 5594, "name": "Delta Distributing", "classification": "C", "status": "Customer", "pendingPayment": "No"}
+    ]
   },
   "jira": {
     "projects": [],
