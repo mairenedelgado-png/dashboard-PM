@@ -1,0 +1,4 @@
+{
+  "jiraKeys": ["LISPRO-1", "LISPRO-238", "LISPRO-281", "LISPRO-1101", "LISPRO-47", "LISPRO-352", "LISPRO-351", "LISPRO-42", "LISPRO-1205"],
+  "rule": "También es interno cuando el resumen contiene la palabra Interno. Las coincidencias no clasificadas permanecen pendientes."
+}
