@@ -1,8 +1,8 @@
 {
   "meta": {
     "mode": "manual",
-    "lastAttempt": "2026-07-22T03:45:32.474Z",
-    "lastSuccessfulSync": "2026-07-22T03:45:32.474Z",
+    "lastAttempt": "2026-07-21T22:02:30-06:00",
+    "lastSuccessfulSync": "2026-07-21T22:02:30-06:00",
     "timezone": "America/Guatemala",
     "privacy": "aggregate-only"
   },
@@ -14,11 +14,57 @@
     "slaBreached": 21
   },
   "sources": {
-    "jira": {"status": "ok", "message": "Corte manual con Rovo: 32 proyectos, 28 tickets abiertos, 16 actividades QA pendientes y 21 SLA vencidos."},
-    "gmail": {"status": "ok", "message": "17 conversaciones humanas con Requerimiento en el asunto; se excluyeron notificaciones automáticas."},
-    "zoho": {"status": "pending", "message": "Pendiente acceso a clasificación y condiciones de pago."},
-    "drive": {"status": "ok", "message": "Dashboards recuperados de Dashboard Listaso."}
+    "jira": {
+      "status": "ok",
+      "message": "LISTICKETS: 28 tickets abiertos y 21 SLA vencidos usando exclusivamente Time to done (customfield_10142). LISPRO: 32 proyectos candidatos, excluyendo requerimientos por clasificación del dashboard. QALT: 6 Tareas por hacer, 8 En curso, 2 En revisión, 0 Blocked y 15 Finalizada."
+    },
+    "gmail": {
+      "status": "ok",
+      "message": "17 conversaciones humanas únicas con Requerimiento en el asunto; cada hilo se contó una sola vez y se excluyeron notificaciones automáticas de Jira, invitaciones y resúmenes automáticos."
+    },
+    "zoho": {
+      "status": "pending",
+      "message": "Clasificación de clientes y condiciones de pago pendientes de acceso o validación. Los registros faltantes deben mostrarse como Pendiente de validación por Alejandra."
+    },
+    "drive": {
+      "status": "ok",
+      "message": "Dashboards publicados desde el repositorio dashboard-PM."
+    },
+    "workload": {
+      "status": "partial",
+      "message": "Política configurada en 7.5 horas diarias y 37.5 horas semanales. La consolidación completa de asignaciones, estimaciones, tareas activas y horas registradas continúa pendiente de extracción detallada de worklogs."
+    }
   },
-  "jira": {"projects": [], "tickets": [], "qa": [], "workload": []},
-  "requirements": {"count": 17, "linkedToJira": null, "withoutJira": null}
+  "validation": {
+    "duplicateJiraKeys": 0,
+    "emailThreadsDeduplicated": true,
+    "recordsWithoutJira": null,
+    "sourceDifferences": [
+      "QALT contiene 31 registros totales: 16 pendientes y 15 finalizados; no se creó métrica de rechazados.",
+      "La clasificación cliente/interno de LISPRO depende del indicador Interno y del catálogo ya definido en el dashboard.",
+      "Zoho aún no entrega clasificación y condiciones de pago para completar todos los registros.",
+      "La relación uno a uno entre las 17 conversaciones de requerimientos y sus claves LISPRO continúa pendiente de conciliación completa."
+    ]
+  },
+  "rules": {
+    "ticketProject": "LISTICKETS",
+    "slaField": "customfield_10142",
+    "projectProject": "LISPRO",
+    "qaProject": "QALT",
+    "qaStatuses": ["Tareas por hacer", "En curso", "En revisión", "Blocked", "Finalizada"],
+    "dailyCapacityHours": 7.5,
+    "weeklyCapacityHours": 37.5,
+    "missingZohoLabel": "Pendiente de validación por Alejandra"
+  },
+  "jira": {
+    "projects": [],
+    "tickets": [],
+    "qa": [],
+    "workload": []
+  },
+  "requirements": {
+    "count": 17,
+    "linkedToJira": null,
+    "withoutJira": null
+  }
 }
