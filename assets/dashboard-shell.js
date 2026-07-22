@@ -13,65 +13,9 @@
  @media(max-width:600px){#listasoPortalBar span{display:none}.zoho-client[data-tooltip]:hover::after{width:220px}}
  `;
  document.head.appendChild(style);document.body.appendChild(bar);
-
  const normalize=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
  const paymentLabel=value=>value==='Yes'?'No pagado':value==='No'?'Pagado':'Por confirmar';
- const priorityFor=(client,opportunity)=>{
-   const status=String(client.status||'');
-   const classification=String(client.classification||'');
-   let score=0;
-   const reasons=[];
-   if(/vip/i.test(status)){score+=40;reasons.push('VIP +40')}
-   if(classification==='A'){score+=30;reasons.push('Clasificación A +30')}
-   else if(classification==='B'){score+=15;reasons.push('Clasificación B +15')}
-   if(client.pendingPayment==='Yes'){score+=25;reasons.push('Pago pendiente +25')}
-   if(/upsell/i.test(String(opportunity||''))){score+=15;reasons.push('Upsell +15')}
-   else if(/cross-sell/i.test(String(opportunity||''))){score+=10;reasons.push('Cross-sell +10')}
-   if(/onboarding/i.test(status)){score+=10;reasons.push('Onboarding +10')}
-   score=Math.min(100,score);
-   if(score>=76)return{label:'Estratégica',className:'red',score,reasons};
-   if(score>=51)return{label:'Alta',className:'red',score,reasons};
-   if(score>=26)return{label:'Media',className:'yellow',score,reasons};
-   return{label:'Baja',className:'green',score,reasons};
- };
- const enhanceRequirements=(liveData)=>{
-   if(!/requerimientos/i.test(document.title))return;
-   const clients=liveData?.zoho?.matchedDashboardClients||[];
-   if(!clients.length)return;
-   const byName=new Map(clients.map(c=>[normalize(c.name),c]));
-   const enhance=()=>{
-     document.querySelectorAll('#tbody tr').forEach(row=>{
-       if(row.dataset.zohoEnhanced==='1')return;
-       const cells=row.querySelectorAll('td');if(cells.length<5)return;
-       const rawName=(cells[0].textContent||'').trim();
-       let client=byName.get(normalize(rawName));
-       if(!client){client=clients.find(c=>normalize(rawName).includes(normalize(c.name))||normalize(c.name).includes(normalize(rawName)))}
-       if(!client)return;
-       row.dataset.zohoEnhanced='1';
-       const status=client.status||'Pendiente de validación por Alejandra';
-       const classification=client.classification||'Pendiente de validación por Alejandra';
-       const payment=paymentLabel(client.pendingPayment);
-       const opportunity=(cells[2].textContent||'').trim();
-       const priority=priorityFor(client,opportunity);
-       const badges=[];
-       if(/vip/i.test(status))badges.push('<span class="zoho-mini vip">VIP</span>');
-       if(classification==='A')badges.push('<span class="zoho-mini class-a">⭐ A</span>');
-       else if(classification&&classification!=='Pendiente de validación por Alejandra')badges.push(`<span class="zoho-mini">${classification}</span>`);
-       if(client.pendingPayment==='Yes')badges.push('<span class="zoho-mini payment">Pago pendiente</span>');
-       const tooltip=`${client.name||rawName}\n────────────────\n⭐ Clasificación: ${classification}\n👑 Estado: ${status}\n💳 Pago: ${payment}\n📈 Oportunidad: ${opportunity||'Por clasificar'}\n🎯 Prioridad: ${priority.label} (${priority.score}/100)\n🧮 Cálculo: ${priority.reasons.length?priority.reasons.join(' · '):'Sin factores adicionales'}\n🏢 Tenant: ${client.tenant||'Sin registrar'}`;
-       cells[0].innerHTML=`<span class="zoho-client" data-tooltip="${tooltip.replace(/"/g,'&quot;')}"><strong>${rawName}</strong>${badges.join('')}</span>`;
-       cells[1].innerHTML=`<span class="badge ${/vip/i.test(status)?'green':'gray'}">${status}</span>`;
-       cells[3].innerHTML=`<span class="badge ${payment==='Pagado'?'green':payment==='No pagado'?'red':'gray'}">${payment}</span>`;
-       cells[4].innerHTML=`<span class="badge ${priority.className} priority-score"><strong>${priority.score}</strong> ${priority.label}</span>`;
-     });
-   };
-   enhance();
-   const tbody=document.getElementById('tbody');if(tbody)new MutationObserver(enhance).observe(tbody,{childList:true,subtree:true});
- };
-
- fetch(`../data/live.json?t=${Date.now()}`,{cache:'no-store'}).then(r=>r.json()).then(d=>{
-   const el=document.getElementById('listasoSync');const date=d.meta?.lastSuccessfulSync;
-   el.textContent=date?`Datos: ${new Intl.DateTimeFormat('es-GT',{dateStyle:'short',timeStyle:'short',timeZone:'America/Guatemala'}).format(new Date(date))}`:'Datos automáticos pendientes';
-   enhanceRequirements(d);
- }).catch(()=>{document.getElementById('listasoSync').textContent='Sin estado de sincronización'});
+ const priorityFor=(client,opportunity)=>{const status=String(client.status||''),classification=String(client.classification||'');let score=0;const reasons=[];if(/vip/i.test(status)){score+=40;reasons.push('VIP +40')}if(classification==='A'){score+=30;reasons.push('Clasificación A +30')}else if(classification==='B'){score+=15;reasons.push('Clasificación B +15')}if(client.pendingPayment==='Yes'){score+=25;reasons.push('Pago pendiente +25')}if(/upsell/i.test(String(opportunity||''))){score+=15;reasons.push('Upsell +15')}else if(/cross-sell/i.test(String(opportunity||''))){score+=10;reasons.push('Cross-sell +10')}if(/onboarding/i.test(status)){score+=10;reasons.push('Onboarding +10')}score=Math.min(100,score);if(score>=76)return{label:'Estratégica',className:'red',score,reasons};if(score>=51)return{label:'Alta',className:'red',score,reasons};if(score>=26)return{label:'Media',className:'yellow',score,reasons};return{label:'Baja',className:'green',score,reasons}};
+ const enhanceRequirements=liveData=>{if(!/requerimientos/i.test(document.title))return;const clients=liveData?.zoho?.matchedDashboardClients||[];if(!clients.length)return;const byName=new Map(clients.map(c=>[normalize(c.name),c])),byTenant=new Map(clients.map(c=>[String(c.tenant),c]));const enhance=()=>{document.querySelectorAll('#tbody tr').forEach(row=>{if(row.dataset.zohoEnhanced==='1')return;const cells=row.querySelectorAll('td');if(cells.length<5)return;const rawName=(cells[0].textContent||'').trim(),rowText=row.textContent||'';let client=byName.get(normalize(rawName));if(!client)client=clients.find(c=>normalize(rawName).includes(normalize(c.name))||normalize(c.name).includes(normalize(rawName)));if(!client){const candidates=rowText.match(/\b\d{4,6}\b/g)||[];client=candidates.map(x=>byTenant.get(x)).find(Boolean)}if(!client)return;row.dataset.zohoEnhanced='1';const status=client.status||'Pendiente de validación por Alejandra',classification=client.classification||'Pendiente de validación por Alejandra',payment=paymentLabel(client.pendingPayment),opportunity=(cells[2].textContent||'').trim(),priority=priorityFor(client,opportunity),badges=[];if(/vip/i.test(status))badges.push('<span class="zoho-mini vip">VIP</span>');if(classification==='A')badges.push('<span class="zoho-mini class-a">⭐ A</span>');else if(classification&&classification!=='Pendiente de validación por Alejandra')badges.push(`<span class="zoho-mini">${classification}</span>`);if(client.pendingPayment==='Yes')badges.push('<span class="zoho-mini payment">Pago pendiente</span>');const tooltip=`${client.name||rawName}\n────────────────\n⭐ Clasificación: ${classification}\n👑 Estado: ${status}\n💳 Pago: ${payment}\n📈 Oportunidad: ${opportunity||'Por clasificar'}\n🎯 Prioridad: ${priority.label} (${priority.score}/100)\n🧮 Cálculo: ${priority.reasons.length?priority.reasons.join(' · '):'Sin factores adicionales'}\n🏢 Tenant: ${client.tenant||'Sin registrar'}`;cells[0].innerHTML=`<span class="zoho-client" data-tooltip="${tooltip.replace(/"/g,'&quot;')}"><strong>${rawName}</strong>${badges.join('')}</span>`;cells[1].innerHTML=`<span class="badge ${/vip/i.test(status)?'green':'gray'}">${status}</span>`;cells[3].innerHTML=`<span class="badge ${payment==='Pagado'?'green':payment==='No pagado'?'red':'gray'}">${payment}</span>`;cells[4].innerHTML=`<span class="badge ${priority.className} priority-score"><strong>${priority.score}</strong> ${priority.label}</span>`})};enhance();const tbody=document.getElementById('tbody');if(tbody)new MutationObserver(enhance).observe(tbody,{childList:true,subtree:true})};
+ fetch(`../data/live.json?t=${Date.now()}`,{cache:'no-store'}).then(r=>r.json()).then(d=>{const el=document.getElementById('listasoSync'),date=d.meta?.lastSuccessfulSync;el.textContent=date?`Datos: ${new Intl.DateTimeFormat('es-GT',{dateStyle:'short',timeStyle:'short',timeZone:'America/Guatemala'}).format(new Date(date))}`:'Datos automáticos pendientes';enhanceRequirements(d)}).catch(()=>{document.getElementById('listasoSync').textContent='Sin estado de sincronización'});
 })();
