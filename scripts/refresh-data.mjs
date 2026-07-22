@@ -43,12 +43,12 @@ function slaOf(issue){
 
 async function refreshJira(){
  const auth=jiraAuth();
- if(!auth){result.sources.jira={status:'pending',message:'Configura JIRA_BASE_URL, JIRA_EMAIL y JIRA_API_TOKEN.'};return false}
+ if(!auth){result.sources.jira={status:'pending',message:'Actualización automática pendiente; se conserva el último corte manual.'};return false}
  const common=['summary','status','assignee','priority','created','updated','timespent','timeoriginalestimate'];
  const [lispro,listickets,qalt]=await Promise.all([
-  jiraSearch(auth,'project = LISPRO ORDER BY updated DESC',common),
-  jiraSearch(auth,'project = LISTICKETS ORDER BY updated DESC',[...common,'customfield_10142','customfield_10175','customfield_10211','customfield_10212']),
-  jiraSearch(auth,'project = QALT ORDER BY updated DESC',common)
+  jiraSearch(auth,'project = LISPRO AND issuetype = Epic AND statusCategory != Done ORDER BY updated DESC',common),
+  jiraSearch(auth,'project = LISTICKETS AND statusCategory != Done ORDER BY updated DESC',[...common,'customfield_10142']),
+  jiraSearch(auth,'project = QALT AND statusCategory != Done ORDER BY updated DESC',common)
  ]);
  const requirementCandidates=lispro.filter(i=>/^\s*requerimiento\b/i.test(i.fields.summary||''));
  const projects=lispro.filter(i=>!/^\s*requerimiento\b/i.test(i.fields.summary||'')).map(i=>({...compactIssue(i),classification:internal.has(i.key)||/\binterno\b/i.test(i.fields.summary||'')?'Interno':'Pendiente'}));
@@ -56,7 +56,8 @@ async function refreshJira(){
  const qa=qalt.map(compactIssue);
  const people=new Map();
  for(const issue of [...lispro,...listickets,...qalt]){const u=issue.fields.assignee;if(!u)continue;const row=people.get(u.accountId)||{id:u.accountId,name:u.displayName,openItems:0,spentSeconds:0,estimatedSeconds:0};if(issue.fields.status?.statusCategory?.key!=='done')row.openItems++;row.spentSeconds+=issue.fields.timespent||0;row.estimatedSeconds+=issue.fields.timeoriginalestimate||0;people.set(u.accountId,row)}
- result.jira={projects,tickets,qa,workload:[...people.values()],requirementCandidates:requirementCandidates.map(compactIssue)};
+ // El repositorio es público: se publican métricas agregadas, no detalles operativos.
+ result.jira={projects:[],tickets:[],qa:[],workload:[],requirementCandidatesCount:requirementCandidates.length};
  result.summary={...result.summary,projects:projects.length,openTickets:tickets.filter(x=>x.statusCategory!=='done').length,qaPending:qa.filter(x=>x.statusCategory!=='done').length,slaBreached:tickets.filter(x=>x.sla?.breached).length};
  result.sources.jira={status:'ok',message:`${lispro.length} LISPRO · ${tickets.length} LISTICKETS · ${qa.length} QALT`};
  return true;
@@ -72,9 +73,9 @@ async function gmailToken(){
 
 async function refreshGmail(){
  const token=await gmailToken();
- if(!token){result.sources.gmail={status:'pending',message:'Configura la autorización OAuth de Gmail.'};return false}
+ if(!token){result.sources.gmail={status:'pending',message:'Actualización automática pendiente; se conserva el último corte manual.'};return false}
  const headers={Authorization:`Bearer ${token}`};let pageToken;const ids=[];
- do{const url=new URL('https://gmail.googleapis.com/gmail/v1/users/me/threads');url.searchParams.set('q','subject:Requerimiento');url.searchParams.set('maxResults','500');if(pageToken)url.searchParams.set('pageToken',pageToken);const r=await fetch(url,{headers});if(!r.ok)throw new Error(`Gmail ${r.status}`);const page=await r.json();ids.push(...(page.threads||[]).map(x=>x.id));pageToken=page.nextPageToken}while(pageToken);
+ do{const url=new URL('https://gmail.googleapis.com/gmail/v1/users/me/threads');url.searchParams.set('q','subject:Requerimiento -in:spam -in:trash -from:jira@viasql.atlassian.net -from:drive-shares-dm-noreply@google.com');url.searchParams.set('maxResults','500');if(pageToken)url.searchParams.set('pageToken',pageToken);const r=await fetch(url,{headers});if(!r.ok)throw new Error(`Gmail ${r.status}`);const page=await r.json();ids.push(...(page.threads||[]).map(x=>x.id));pageToken=page.nextPageToken}while(pageToken);
  // Por privacidad, el repositorio público recibe conteos y no asuntos ni cuerpos de correo.
  result.requirements={count:ids.length,linkedToJira:null,withoutJira:null};
  result.summary={...result.summary,requirements:ids.length};

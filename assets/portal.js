@@ -7,7 +7,8 @@ function render(data){
  document.getElementById('metrics').innerHTML=cards.map(([l,v,h])=>`<article><span>${l}</span><strong>${v??'—'}</strong><small>${h}</small></article>`).join('');
  const when=data.meta?.lastSuccessfulSync;
  document.getElementById('lastSync').textContent=when?new Intl.DateTimeFormat('es-GT',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Guatemala'}).format(new Date(when)):'Pendiente de conexión';
- document.getElementById('syncMode').textContent=data.meta?.mode==='live'?'Datos sincronizados automáticamente':'Mostrando último corte disponible';
+ const mode=data.meta?.mode;
+ document.getElementById('syncMode').textContent=mode==='live'?'Datos sincronizados automáticamente':mode==='manual'?'Corte actualizado con Rovo y Gmail':'Mostrando último corte disponible';
  document.getElementById('sourceList').innerHTML=Object.entries(data.sources||{}).map(([key,v])=>{const state=v.status||'pending';const text=state==='ok'?'Conectado':state==='error'?'Error':'Pendiente';return `<article class="source"><div class="source-head"><h3>${esc(labels[key]||key)}</h3><span class="status ${esc(state)}">${text}</span></div><p>${esc(v.message||details[key]||'')}</p></article>`}).join('');
 }
 async function load(){try{const r=await fetch(`data/live.json?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw new Error('No disponible');render(await r.json())}catch(e){document.getElementById('lastSync').textContent='No disponible';document.getElementById('syncMode').textContent='No fue posible leer el archivo de datos'}}
