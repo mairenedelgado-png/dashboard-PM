@@ -15,8 +15,8 @@
   },
   "sources": {
     "jira": {
-      "status": "pending",
-      "message": "Actualización automática pendiente; se conserva el último corte manual."
+      "status": "error",
+      "message": "Jira 404: {\"errorMessage\": \"Site temporarily unavailable\", \"errorCode\": \"OTHER\"}"
     },
     "gmail": {
       "status": "pending",
