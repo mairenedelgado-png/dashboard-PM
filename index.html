@@ -16,31 +16,33 @@
       <p>Gestión de Proyectos, Requerimientos, QA, Capacidad y Customer Success para Listaso Technologies. La página muestra la última sincronización y el estado de cada fuente.</p>
     </div>
 
-    <aside class="sync-card compact" aria-live="polite">
-      <div class="sync-card-header">
-        <strong id="systemStatus"><i class="status-dot online"></i> En línea</strong>
-        <span id="syncSpinner" class="sync-spinner" aria-hidden="true"></span>
-      </div>
+    <div class="sync-stack">
+      <aside class="sync-card compact" aria-live="polite">
+        <div class="sync-card-header">
+          <strong id="systemStatus"><i class="status-dot online"></i> En línea</strong>
+          <span id="syncSpinner" class="sync-spinner" aria-hidden="true"></span>
+        </div>
 
-      <button id="refreshButton" class="sync-button" type="button">↻ Actualizar información</button>
+        <div class="sync-meta">
+          <span>Última sincronización</span>
+          <strong id="lastSync">Consultando…</strong>
+          <small id="syncMode">Cargando estado de fuentes</small>
+        </div>
 
-      <div class="sync-progress" id="syncProgress" hidden>
-        <div class="sync-progress-bar" id="syncProgressBar"></div>
-      </div>
+        <div class="sync-progress" id="syncProgress" hidden>
+          <div class="sync-progress-bar" id="syncProgressBar"></div>
+        </div>
 
-      <div class="sync-meta">
-        <span>Última sincronización</span>
-        <strong id="lastSync">Consultando…</strong>
-        <small id="syncMode">Cargando estado de fuentes</small>
-      </div>
+        <div class="sync-sources" id="syncSources" hidden>
+          <div><span>Jira</span><b>✓</b></div>
+          <div><span>Gmail</span><b>✓</b></div>
+          <div><span>Zoho</span><b>✓</b></div>
+          <div><span>Dashboards</span><b>✓</b></div>
+        </div>
+      </aside>
 
-      <div class="sync-sources" id="syncSources" hidden>
-        <div><span>Jira</span><b>✓</b></div>
-        <div><span>Gmail</span><b>✓</b></div>
-        <div><span>Zoho</span><b>✓</b></div>
-        <div><span>Dashboards</span><b>✓</b></div>
-      </div>
-    </aside>
+      <button id="refreshButton" class="sync-button standalone" type="button">↻ Actualizar información</button>
+    </div>
   </header>
 
   <main>
