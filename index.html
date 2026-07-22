@@ -14,36 +14,31 @@
       <p class="eyebrow">PROJECT MANAGEMENT · MAIRENE DELGADO</p>
       <h1>PM Operations Center</h1>
       <p>Gestión de Proyectos, Requerimientos, QA, Capacidad y Customer Success para Listaso Technologies. La página muestra la última sincronización y el estado de cada fuente.</p>
-      <div class="hero-actions">
-        <a class="primary" href="dashboards/pm.html">📊 Abrir Dashboard PM</a>
-        <button id="refreshButton" class="sync-button" type="button">↻ Actualizar información</button>
-      </div>
     </div>
 
-    <aside class="sync-card" aria-live="polite">
+    <aside class="sync-card compact" aria-live="polite">
       <div class="sync-card-header">
-        <div>
-          <span class="sync-label">ESTADO DEL SISTEMA</span>
-          <strong id="systemStatus"><i class="status-dot online"></i> En línea</strong>
-        </div>
+        <strong id="systemStatus"><i class="status-dot online"></i> En línea</strong>
         <span id="syncSpinner" class="sync-spinner" aria-hidden="true"></span>
       </div>
 
+      <button id="refreshButton" class="sync-button" type="button">↻ Actualizar información</button>
+
       <div class="sync-progress" id="syncProgress" hidden>
         <div class="sync-progress-bar" id="syncProgressBar"></div>
-      </div>
-
-      <div class="sync-sources" id="syncSources">
-        <div><span>Jira</span><b>✓</b></div>
-        <div><span>Gmail</span><b>✓</b></div>
-        <div><span>Zoho</span><b>✓</b></div>
-        <div><span>Dashboards</span><b>✓</b></div>
       </div>
 
       <div class="sync-meta">
         <span>Última sincronización</span>
         <strong id="lastSync">Consultando…</strong>
         <small id="syncMode">Cargando estado de fuentes</small>
+      </div>
+
+      <div class="sync-sources" id="syncSources" hidden>
+        <div><span>Jira</span><b>✓</b></div>
+        <div><span>Gmail</span><b>✓</b></div>
+        <div><span>Zoho</span><b>✓</b></div>
+        <div><span>Dashboards</span><b>✓</b></div>
       </div>
     </aside>
   </header>
