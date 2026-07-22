@@ -7,9 +7,10 @@
  .zoho-client{position:relative;display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;cursor:help}
  .zoho-mini{display:inline-flex;align-items:center;padding:2px 6px;border-radius:999px;font-size:9px;font-weight:800;line-height:1.4;background:#eef2ff;color:#374151;border:1px solid #e5e7eb;white-space:nowrap}
  .zoho-mini.vip{background:#dcfce7;color:#166534;border-color:#bbf7d0}.zoho-mini.class-a{background:#fef3c7;color:#92400e;border-color:#fde68a}.zoho-mini.payment{background:#fee2e2;color:#991b1b;border-color:#fecaca}
- .zoho-client[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;left:0;top:calc(100% + 8px);z-index:9999;width:245px;white-space:pre-line;background:#172033;color:#fff;padding:11px 12px;border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.25);font-size:11px;font-weight:600;line-height:1.55;pointer-events:none}
+ .zoho-client[data-tooltip]:hover::after{content:attr(data-tooltip);position:absolute;left:0;top:calc(100% + 8px);z-index:9999;width:270px;white-space:pre-line;background:#172033;color:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 14px 34px rgba(15,23,42,.25);font-size:11px;font-weight:600;line-height:1.6;pointer-events:none}
  .zoho-client[data-tooltip]:hover::before{content:"";position:absolute;left:16px;top:100%;border:6px solid transparent;border-bottom-color:#172033;z-index:10000}
- @media(max-width:600px){#listasoPortalBar span{display:none}.zoho-client[data-tooltip]:hover::after{width:210px}}
+ .priority-score{display:inline-flex;align-items:center;gap:5px}.priority-score strong{font-size:12px}
+ @media(max-width:600px){#listasoPortalBar span{display:none}.zoho-client[data-tooltip]:hover::after{width:220px}}
  `;
  document.head.appendChild(style);document.body.appendChild(bar);
 
@@ -18,12 +19,20 @@
  const priorityFor=(client,opportunity)=>{
    const status=String(client.status||'');
    const classification=String(client.classification||'');
-   const vip=/vip/i.test(status);
-   const unpaid=client.pendingPayment==='Yes';
-   if((classification==='A'&&vip)||(vip&&unpaid))return['Estratégica','red'];
-   if(vip||classification==='A'||unpaid)return['Alta','red'];
-   if(/upsell|cross-sell/i.test(String(opportunity||'')))return['Media','yellow'];
-   return['Informativa','gray'];
+   let score=0;
+   const reasons=[];
+   if(/vip/i.test(status)){score+=40;reasons.push('VIP +40')}
+   if(classification==='A'){score+=30;reasons.push('Clasificación A +30')}
+   else if(classification==='B'){score+=15;reasons.push('Clasificación B +15')}
+   if(client.pendingPayment==='Yes'){score+=25;reasons.push('Pago pendiente +25')}
+   if(/upsell/i.test(String(opportunity||''))){score+=15;reasons.push('Upsell +15')}
+   else if(/cross-sell/i.test(String(opportunity||''))){score+=10;reasons.push('Cross-sell +10')}
+   if(/onboarding/i.test(status)){score+=10;reasons.push('Onboarding +10')}
+   score=Math.min(100,score);
+   if(score>=76)return{label:'Estratégica',className:'red',score,reasons};
+   if(score>=51)return{label:'Alta',className:'red',score,reasons};
+   if(score>=26)return{label:'Media',className:'yellow',score,reasons};
+   return{label:'Baja',className:'green',score,reasons};
  };
  const enhanceRequirements=(liveData)=>{
    if(!/requerimientos/i.test(document.title))return;
@@ -43,17 +52,17 @@
        const classification=client.classification||'Pendiente de validación por Alejandra';
        const payment=paymentLabel(client.pendingPayment);
        const opportunity=(cells[2].textContent||'').trim();
-       const [priority,priorityClass]=priorityFor(client,opportunity);
+       const priority=priorityFor(client,opportunity);
        const badges=[];
        if(/vip/i.test(status))badges.push('<span class="zoho-mini vip">VIP</span>');
        if(classification==='A')badges.push('<span class="zoho-mini class-a">⭐ A</span>');
        else if(classification&&classification!=='Pendiente de validación por Alejandra')badges.push(`<span class="zoho-mini">${classification}</span>`);
        if(client.pendingPayment==='Yes')badges.push('<span class="zoho-mini payment">Pago pendiente</span>');
-       const tooltip=`Zoho CRM\nClasificación: ${classification}\nEstado: ${status}\nPago: ${payment}\nTenant: ${client.tenant||'Sin registrar'}`;
+       const tooltip=`${client.name||rawName}\n────────────────\n⭐ Clasificación: ${classification}\n👑 Estado: ${status}\n💳 Pago: ${payment}\n📈 Oportunidad: ${opportunity||'Por clasificar'}\n🎯 Prioridad: ${priority.label} (${priority.score}/100)\n🧮 Cálculo: ${priority.reasons.length?priority.reasons.join(' · '):'Sin factores adicionales'}\n🏢 Tenant: ${client.tenant||'Sin registrar'}`;
        cells[0].innerHTML=`<span class="zoho-client" data-tooltip="${tooltip.replace(/"/g,'&quot;')}"><strong>${rawName}</strong>${badges.join('')}</span>`;
        cells[1].innerHTML=`<span class="badge ${/vip/i.test(status)?'green':'gray'}">${status}</span>`;
        cells[3].innerHTML=`<span class="badge ${payment==='Pagado'?'green':payment==='No pagado'?'red':'gray'}">${payment}</span>`;
-       cells[4].innerHTML=`<span class="badge ${priorityClass}">${priority}</span>`;
+       cells[4].innerHTML=`<span class="badge ${priority.className} priority-score"><strong>${priority.score}</strong> ${priority.label}</span>`;
      });
    };
    enhance();
