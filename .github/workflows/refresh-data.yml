@@ -3,7 +3,7 @@ name: Actualizar datos de dashboards
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 */6 * * *"
+    # GitHub Actions usa UTC; Guatemala es UTC-6 durante todo el año.\n    - cron: "0 12 * * *"   # 06:00 Guatemala\n    - cron: "0 18 * * *"   # 12:00 Guatemala\n    - cron: "30 21 * * *"  # 15:30 Guatemala
 
 permissions:
   contents: write
