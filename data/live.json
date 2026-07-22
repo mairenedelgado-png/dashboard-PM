@@ -15,16 +15,16 @@
   },
   "sources": {
     "jira": {
-      "status": "ok",
-      "message": "LISTICKETS: 28 tickets abiertos y 21 SLA vencidos usando exclusivamente Time to done (customfield_10142). LISPRO: 32 proyectos candidatos, excluyendo requerimientos por clasificación del dashboard. QALT: 6 Tareas por hacer, 8 En curso, 2 En revisión, 0 Blocked y 15 Finalizada."
+      "status": "pending",
+      "message": "Actualización automática pendiente; se conserva el último corte manual."
     },
     "gmail": {
-      "status": "ok",
-      "message": "17 conversaciones humanas únicas con Requerimiento en el asunto; cada hilo se contó una sola vez y se excluyeron notificaciones automáticas de Jira, invitaciones y resúmenes automáticos."
+      "status": "pending",
+      "message": "Actualización automática pendiente; se conserva el último corte manual."
     },
     "zoho": {
-      "status": "partial",
-      "message": "Zoho CRM Accounts conectado. Ya están disponibles clasificación, estado VIP/onboarding, salud del cliente, pago pendiente, upsell, ejecutivo comercial, tenant, usuarios, ERP, paquete y desarrollos personalizados. No se localizó todavía un campo confiable de condiciones o términos de pago; los valores ausentes se muestran como Pendiente de validación por Alejandra."
+      "status": "pending",
+      "message": "Pendiente acceso a clasificación y condiciones de pago."
     },
     "drive": {
       "status": "ok",
@@ -52,7 +52,13 @@
     "slaField": "customfield_10142",
     "projectProject": "LISPRO",
     "qaProject": "QALT",
-    "qaStatuses": ["Tareas por hacer", "En curso", "En revisión", "Blocked", "Finalizada"],
+    "qaStatuses": [
+      "Tareas por hacer",
+      "En curso",
+      "En revisión",
+      "Blocked",
+      "Finalizada"
+    ],
     "dailyCapacityHours": 7.5,
     "weeklyCapacityHours": 37.5,
     "missingZohoLabel": "Pendiente de validación por Alejandra",
@@ -84,14 +90,62 @@
     ],
     "paymentTermsField": null,
     "matchedDashboardClients": [
-      {"tenant": 5524, "name": "Triangle Quality Foods LLC", "classification": "A", "status": "Onboarding VIP", "pendingPayment": "No"},
-      {"tenant": 7614, "name": "PANAMERICAN FOODS FLORIDA", "classification": "C", "status": "Customer", "pendingPayment": "Pendiente de validación por Alejandra"},
-      {"tenant": 7817, "name": "American Imports", "classification": "C", "status": "Onboarding VIP", "pendingPayment": "Yes"},
-      {"tenant": 7743, "name": "Comercial Mexicana", "classification": "A", "status": "Onboarding VIP", "pendingPayment": "No"},
-      {"tenant": 5616, "name": "La Bodega Plus LLC", "classification": "Pendiente de validación por Alejandra", "status": "Onboarding", "pendingPayment": "No"},
-      {"tenant": 5612, "name": "V4 Food Family", "classification": "Pendiente de validación por Alejandra", "status": "Onboarding", "pendingPayment": "No"},
-      {"tenant": 5813, "name": "Diamond Rock Food Import Inc", "classification": "B", "status": "Onboarding", "pendingPayment": "Pendiente de validación por Alejandra"},
-      {"tenant": 5594, "name": "Delta Distributing", "classification": "C", "status": "Customer", "pendingPayment": "No"}
+      {
+        "tenant": 5524,
+        "name": "Triangle Quality Foods LLC",
+        "classification": "A",
+        "status": "Onboarding VIP",
+        "pendingPayment": "No"
+      },
+      {
+        "tenant": 7614,
+        "name": "PANAMERICAN FOODS FLORIDA",
+        "classification": "C",
+        "status": "Customer",
+        "pendingPayment": "Pendiente de validación por Alejandra"
+      },
+      {
+        "tenant": 7817,
+        "name": "American Imports",
+        "classification": "C",
+        "status": "Onboarding VIP",
+        "pendingPayment": "Yes"
+      },
+      {
+        "tenant": 7743,
+        "name": "Comercial Mexicana",
+        "classification": "A",
+        "status": "Onboarding VIP",
+        "pendingPayment": "No"
+      },
+      {
+        "tenant": 5616,
+        "name": "La Bodega Plus LLC",
+        "classification": "Pendiente de validación por Alejandra",
+        "status": "Onboarding",
+        "pendingPayment": "No"
+      },
+      {
+        "tenant": 5612,
+        "name": "V4 Food Family",
+        "classification": "Pendiente de validación por Alejandra",
+        "status": "Onboarding",
+        "pendingPayment": "No"
+      },
+      {
+        "tenant": 5813,
+        "name": "Diamond Rock Food Import Inc",
+        "classification": "B",
+        "status": "Onboarding",
+        "pendingPayment": "Pendiente de validación por Alejandra"
+      },
+      {
+        "tenant": 5594,
+        "name": "Delta Distributing",
+        "classification": "C",
+        "status": "Customer",
+        "pendingPayment": "No"
+      }
     ]
   },
   "jira": {
