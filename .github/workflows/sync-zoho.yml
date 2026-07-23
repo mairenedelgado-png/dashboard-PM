@@ -1,0 +1,74 @@
+name: Sincronizar Zoho y dashboard
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub Actions usa UTC. Estos horarios equivalen a 6:00, 12:00 y 15:45
+    # en El Salvador/Guatemala (UTC-6), de lunes a viernes.
+    - cron: "0 12 * * 1-5"
+    - cron: "0 18 * * 1-5"
+    - cron: "45 21 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-dashboard-data
+  cancel-in-progress: false
+
+jobs:
+  sync-zoho:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validar secretos requeridos
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+        run: |
+          test -n "$ZOHO_CLIENT_ID" || (echo "Falta ZOHO_CLIENT_ID" && exit 1)
+          test -n "$ZOHO_CLIENT_SECRET" || (echo "Falta ZOHO_CLIENT_SECRET" && exit 1)
+          test -n "$ZOHO_REFRESH_TOKEN" || (echo "Falta ZOHO_REFRESH_TOKEN" && exit 1)
+
+      - name: Consultar Zoho y actualizar live.json
+        env:
+          ZOHO_CLIENT_ID: ${{ secrets.ZOHO_CLIENT_ID }}
+          ZOHO_CLIENT_SECRET: ${{ secrets.ZOHO_CLIENT_SECRET }}
+          ZOHO_REFRESH_TOKEN: ${{ secrets.ZOHO_REFRESH_TOKEN }}
+          ZOHO_ACCOUNTS_URL: ${{ vars.ZOHO_ACCOUNTS_URL || 'https://accounts.zoho.com' }}
+          ZOHO_API_DOMAIN: ${{ vars.ZOHO_API_DOMAIN || 'https://www.zohoapis.com' }}
+          ZOHO_MODULE: ${{ vars.ZOHO_MODULE || 'Accounts' }}
+          ZOHO_TENANT_FIELD: ${{ vars.ZOHO_TENANT_FIELD || 'Tenant' }}
+          ZOHO_NAME_FIELD: ${{ vars.ZOHO_NAME_FIELD || 'Account_Name' }}
+          ZOHO_CLASSIFICATION_FIELD: ${{ vars.ZOHO_CLASSIFICATION_FIELD || 'Classification' }}
+          ZOHO_STATUS_FIELD: ${{ vars.ZOHO_STATUS_FIELD || 'Status' }}
+          ZOHO_PAYMENT_FIELD: ${{ vars.ZOHO_PAYMENT_FIELD || 'Pending_Payment' }}
+          DASHBOARD_TIMEZONE: America/El_Salvador
+        run: python scripts/sync_zoho.py
+
+      - name: Validar JSON generado
+        run: python -m json.tool data/live.json > /dev/null
+
+      - name: Publicar actualización
+        run: |
+          git config user.name "Dashboard PM Bot"
+          git config user.email "dashboard-pm-bot@users.noreply.github.com"
+          git add data/live.json
+          if git diff --cached --quiet; then
+            echo "No hay cambios para publicar."
+          else
+            git commit -m "Actualizar datos de Zoho automáticamente"
+            git push
+          fi
