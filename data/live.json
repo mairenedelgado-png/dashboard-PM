@@ -1,50 +1,49 @@
 {
   "meta": {
     "mode": "manual",
-    "lastAttempt": "2026-07-21T22:22:17-06:00",
-    "lastSuccessfulSync": "2026-07-21T22:22:17-06:00",
+    "lastAttempt": "2026-07-22T11:59:24-06:00",
+    "lastSuccessfulSync": "2026-07-22T11:59:24-06:00",
     "timezone": "America/Guatemala",
     "privacy": "aggregate-only"
   },
   "summary": {
     "projects": 32,
-    "requirements": 17,
+    "requirements": 19,
     "openTickets": 28,
     "qaPending": 16,
     "slaBreached": 21
   },
   "sources": {
     "jira": {
-      "status": "error",
-      "message": "Jira 404: {\"errorMessage\": \"Site temporarily unavailable\", \"errorCode\": \"OTHER\"}"
+      "status": "ok",
+      "message": "Jira revisado: cambios recientes en LISPRO, LISTICKETS y QALT; estados y responsables conciliados para requerimientos prioritarios."
     },
     "gmail": {
-      "status": "pending",
-      "message": "Actualización automática pendiente; se conserva el último corte manual."
+      "status": "ok",
+      "message": "Correos con asunto Requerimiento revisados y deduplicados por conversación hasta el 22/07/2026."
     },
     "zoho": {
-      "status": "pending",
-      "message": "Pendiente acceso a clasificación y condiciones de pago."
+      "status": "partial",
+      "message": "Se conserva el último corte comercial disponible de clasificación, estado y pago."
     },
     "drive": {
       "status": "ok",
-      "message": "Dashboards publicados desde el repositorio dashboard-PM."
+      "message": "Dashboards publicados desde el repositorio dashboard-PM; no se identificó una minuta posterior que contradiga los cambios revisados."
     },
     "workload": {
       "status": "partial",
-      "message": "Política configurada en 7.5 horas diarias y 37.5 horas semanales. La consolidación completa de asignaciones, estimaciones, tareas activas y horas registradas continúa pendiente de extracción detallada de worklogs."
+      "message": "Política configurada en 7.5 horas diarias y 37.5 horas semanales; extracción detallada de worklogs continúa pendiente."
     }
   },
   "validation": {
     "duplicateJiraKeys": 0,
     "emailThreadsDeduplicated": true,
-    "recordsWithoutJira": null,
+    "recordsWithoutJira": 0,
     "sourceDifferences": [
-      "QALT contiene 31 registros totales: 16 pendientes y 15 finalizados; no se creó métrica de rechazados.",
-      "La clasificación cliente/interno de LISPRO depende del indicador Interno y del catálogo ya definido en el dashboard.",
-      "Zoho Accounts contiene la clasificación comercial y el indicador Pending Payment, pero no se encontró un campo inequívoco para términos o condiciones de pago.",
-      "Hay cuentas de Zoho con clasificación, salud, tipo de cliente o pago pendiente sin completar; se conserva el estado Pendiente de validación por Alejandra.",
-      "La relación uno a uno entre las 17 conversaciones de requerimientos y sus claves LISPRO continúa pendiente de conciliación completa."
+      "LISPRO-1234 y LISPRO-1068 corresponden al mismo frente de restricciones de login; ambos aparecen en UAT/validación y deben controlarse como casos relacionados.",
+      "Se incorporaron dos nuevos requerimientos con épica creada y estimación pendiente: LISPRO-1252 y LISPRO-1263.",
+      "V4 Food Family BRD003 mantiene seguimiento comercial pendiente de información para el cliente.",
+      "La información de Zoho se conserva del último corte validado y no se sobreescribió con datos no confirmados."
     ]
   },
   "rules": {
@@ -52,13 +51,6 @@
     "slaField": "customfield_10142",
     "projectProject": "LISPRO",
     "qaProject": "QALT",
-    "qaStatuses": [
-      "Tareas por hacer",
-      "En curso",
-      "En revisión",
-      "Blocked",
-      "Finalizada"
-    ],
     "dailyCapacityHours": 7.5,
     "weeklyCapacityHours": 37.5,
     "missingZohoLabel": "Pendiente de validación por Alejandra",
@@ -67,96 +59,55 @@
   "zoho": {
     "module": "Accounts",
     "matchField": "Tenant",
-    "availableFields": [
-      "Classification",
-      "Status",
-      "Customer_Type",
-      "Pending_Payment",
-      "Customer_Health",
-      "Upsell",
-      "Possible_Upsell",
-      "Sales_Rep_Assigned",
-      "Users",
-      "Sales_App_Users",
-      "Delivery_Users",
-      "BackOffice_Users",
-      "Inventory_Users",
-      "Sync_Users",
-      "Number_Custom_Developments",
-      "ERP",
-      "Package",
-      "Apps_Incluided",
-      "Cuenta_Estrat_gica_Presidencia"
-    ],
     "paymentTermsField": null,
     "matchedDashboardClients": [
-      {
-        "tenant": 5524,
-        "name": "Triangle Quality Foods LLC",
-        "classification": "A",
-        "status": "Onboarding VIP",
-        "pendingPayment": "No"
-      },
-      {
-        "tenant": 7614,
-        "name": "PANAMERICAN FOODS FLORIDA",
-        "classification": "C",
-        "status": "Customer",
-        "pendingPayment": "Pendiente de validación por Alejandra"
-      },
-      {
-        "tenant": 7817,
-        "name": "American Imports",
-        "classification": "C",
-        "status": "Onboarding VIP",
-        "pendingPayment": "Yes"
-      },
-      {
-        "tenant": 7743,
-        "name": "Comercial Mexicana",
-        "classification": "A",
-        "status": "Onboarding VIP",
-        "pendingPayment": "No"
-      },
-      {
-        "tenant": 5616,
-        "name": "La Bodega Plus LLC",
-        "classification": "Pendiente de validación por Alejandra",
-        "status": "Onboarding",
-        "pendingPayment": "No"
-      },
-      {
-        "tenant": 5612,
-        "name": "V4 Food Family",
-        "classification": "Pendiente de validación por Alejandra",
-        "status": "Onboarding",
-        "pendingPayment": "No"
-      },
-      {
-        "tenant": 5813,
-        "name": "Diamond Rock Food Import Inc",
-        "classification": "B",
-        "status": "Onboarding",
-        "pendingPayment": "Pendiente de validación por Alejandra"
-      },
-      {
-        "tenant": 5594,
-        "name": "Delta Distributing",
-        "classification": "C",
-        "status": "Customer",
-        "pendingPayment": "No"
-      }
+      {"tenant":5524,"name":"Triangle Quality Foods LLC","classification":"A","status":"Onboarding VIP","pendingPayment":"No"},
+      {"tenant":7614,"name":"PANAMERICAN FOODS FLORIDA","classification":"C","status":"Customer","pendingPayment":"Pendiente de validación por Alejandra"},
+      {"tenant":7817,"name":"American Imports","classification":"C","status":"Onboarding VIP","pendingPayment":"Yes"},
+      {"tenant":7743,"name":"Comercial Mexicana","classification":"A","status":"Onboarding VIP","pendingPayment":"No"},
+      {"tenant":5616,"name":"La Bodega Plus LLC","classification":"Pendiente de validación por Alejandra","status":"Onboarding","pendingPayment":"No"},
+      {"tenant":5612,"name":"V4 Food Family","classification":"Pendiente de validación por Alejandra","status":"Onboarding","pendingPayment":"No"},
+      {"tenant":5813,"name":"Diamond Rock Food Import Inc","classification":"B","status":"Onboarding","pendingPayment":"Pendiente de validación por Alejandra"},
+      {"tenant":5594,"name":"Delta Distributing","classification":"C","status":"Customer","pendingPayment":"No"}
     ]
   },
   "jira": {
-    "projects": [],
+    "projects": [
+      {"key":"LISPRO-1268","summary":"Android DEV - Show Print Approved Date","status":"Tareas por hacer","assignee":"Gilberto Campos","priority":"Por confirmar"},
+      {"key":"LISPRO-1267","summary":"Android - NumSpacePrintZebra","status":"Tareas por hacer","assignee":"Gilberto Campos","priority":"Por confirmar"},
+      {"key":"LISPRO-1266","summary":"iOS - Show Print Approved Date","status":"Tareas por hacer","assignee":"René Borja","priority":"Por confirmar"},
+      {"key":"LISPRO-1265","summary":"iOS - NumSpacePrintZebra","status":"In Progress DEV","assignee":"René Borja","priority":"Por confirmar"},
+      {"key":"LISPRO-1263","summary":"Requerimiento | Distribuidora la Esperanza LLC - BRD002","status":"Tareas por hacer","assignee":"Fernando Cosme","priority":"Pendiente de estimación","comment":"Épica creada; a la espera de evaluación y tiempos."},
+      {"key":"LISPRO-1252","summary":"Requerimiento | Valley Prime Wholesale - BDR001","status":"Tareas por hacer","assignee":"Alexis Mendez","priority":"Pendiente de estimación","comment":"Épica creada; alcance confirmado para archivo Excel desde Customers y Products."},
+      {"key":"LISPRO-1234","summary":"Restricciones de Login por cuenta - Latinx Import","status":"UAT","assignee":"Alexis Mendez","priority":"Medium","comment":"Caso relacionado con LISPRO-1068; validación previa a producción."},
+      {"key":"LISPRO-1192","summary":"TRT Overseas LLC - Sincronizador SAP","status":"UAT","assignee":"Alexis Mendez","priority":"Highest","comment":"Cliente informado y monitoreo posterior al despliegue."},
+      {"key":"LISPRO-1159","summary":"Panamerican Food - sincronización de price levels","status":"UAT","assignee":"Alexis Mendez","priority":"Highest","comment":"Pendiente cierre de validaciones y dependencia técnica asociada."},
+      {"key":"LISPRO-1155","summary":"V4 Food Family BRD003 - Reportes de Facturas","status":"Tareas por hacer","assignee":"Kevin Martinez","priority":"Por confirmar","comment":"Correo del 22/07 indica que el cliente aún espera información del requerimiento."},
+      {"key":"LISPRO-1104","summary":"Forms & Surveys iOS - Milestone 1","status":"DEV DONE","assignee":"Mairene Delgado","priority":"Por confirmar"},
+      {"key":"LISPRO-1103","summary":"Forms & Surveys Android - Milestone 1","status":"In Progress DEV","assignee":"Mairene Delgado","priority":"Por confirmar"},
+      {"key":"LISPRO-1093","summary":"La Bodega Plus","status":"UAT","assignee":"Luis Girón","priority":"Highest"},
+      {"key":"LISPRO-1088","summary":"V4 Foods - estándar de manejo de decimales","status":"UAT","assignee":"William Rivas","priority":"High"}
+    ],
     "tickets": [],
     "qa": [],
     "workload": []
   },
   "requirements": {
-    "count": 17,
-    "linkedToJira": null,
-    "withoutJira": null
-  }
+    "count": 19,
+    "linkedToJira": 19,
+    "withoutJira": 0,
+    "recent": [
+      {"key":"LISPRO-1263","client":"Distribuidora la Esperanza LLC","status":"Tareas por hacer","nextStep":"Estimar tiempos y evaluar alcance"},
+      {"key":"LISPRO-1252","client":"Valley Prime Wholesale","status":"Tareas por hacer","nextStep":"Estimar tiempos y planificar"},
+      {"key":"LISPRO-1234","client":"Latinx Import","status":"UAT","nextStep":"Validación y pase a producción"},
+      {"key":"LISPRO-1155","client":"V4 Food Family","status":"Tareas por hacer","nextStep":"Dar respuesta comercial y completar información al cliente"}
+    ]
+  },
+  "recentUpdates": [
+    {"source":"Jira","key":"LISPRO-1234","change":"Estado confirmado en UAT"},
+    {"source":"Jira","key":"LISPRO-1265","change":"Inició desarrollo iOS"},
+    {"source":"Gmail","key":"LISPRO-1155","change":"Cliente continúa esperando información del requerimiento"},
+    {"source":"Gmail/Jira","key":"LISPRO-1252","change":"Épica creada y pendiente estimación"},
+    {"source":"Gmail/Jira","key":"LISPRO-1263","change":"Épica creada y pendiente evaluación"}
+  ]
 }
