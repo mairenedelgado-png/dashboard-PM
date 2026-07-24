@@ -7,7 +7,7 @@ function render(data){
   const cards=[['Proyectos',s.projects,'LISPRO sin Requerimientos'],['Requerimientos',s.requirements,'Conversaciones de correo'],['Tickets abiertos',s.openTickets,'LISTICKETS'],['QA pendiente',s.qaPending,'QALT'],['SLA vencido',s.slaBreached,'Time to done']];
   document.getElementById('metrics').innerHTML=cards.map(([l,v,h])=>`<article><span>${l}</span><strong>${v??'—'}</strong><small>${h}</small></article>`).join('');
   const when=data.meta?.lastSuccessfulSync;
-  document.getElementById('lastSync').textContent=when?new Intl.DateTimeFormat('es-GT',{dateStyle:'medium',timeStyle:'short',timeZone:'America/Guatemala'}).format(new Date(when)):'Pendiente de conexión';
+  document.getElementById('lastSync').textContent=when?new Intl.DateTimeFormat('es-SV',{dateStyle:'medium',timeStyle:'short',timeZone:'America/El_Salvador'}).format(new Date(when)):'Pendiente de conexión';
   const mode=data.meta?.mode;
   document.getElementById('syncMode').textContent=mode==='live'?'Datos sincronizados automáticamente':mode==='manual'?'Corte actualizado con Rovo y Gmail':'Mostrando último corte disponible';
   document.getElementById('sourceList').innerHTML=Object.entries(data.sources||{}).map(([key,v])=>{const state=v.status||'pending';const text=state==='ok'?'Conectado':state==='error'?'Error':'Pendiente';return `<article class="source"><div class="source-head"><h3>${esc(labels[key]||key)}</h3><span class="status ${esc(state)}">${text}</span></div><p>${esc(v.message||details[key]||'')}</p></article>`}).join('');
@@ -75,6 +75,23 @@ async function load(showProgress=false){
   }
 }
 
+async function registerDashboardSync(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    const registration=await navigator.serviceWorker.register('./sw.js',{scope:'./'});
+    await navigator.serviceWorker.ready;
+    if(!navigator.serviceWorker.controller){
+      navigator.serviceWorker.addEventListener('controllerchange',()=>{
+        sessionStorage.setItem('dashboardSyncReady','1');
+      },{once:true});
+    }
+    return registration;
+  }catch(error){
+    console.warn('No fue posible activar la sincronización de dashboards.',error);
+  }
+}
+
 const refreshButton=document.getElementById('refreshButton');
 if(refreshButton)refreshButton.addEventListener('click',()=>load(true));
+registerDashboardSync();
 load();
